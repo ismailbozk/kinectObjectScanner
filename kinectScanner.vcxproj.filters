@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialization\Serialization.cpp">
+    <ClCompile Include="Serialization\SerializeCSV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,10 +26,202 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Serialization\SerializeCSV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="kinectScanner.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Debug\TestData\boxes1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\boxes2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\boxes3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\boxes4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\boxes5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\father1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\father2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\father3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\father4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\father5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBro1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBro2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBro3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBro4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBro5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBroGuitarBoxesSphere1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBroGuitarBoxesSphere2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBroGuitarBoxesSphere3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBroGuitarBoxesSphere4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\littleBroGuitarBoxesSphere5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguin1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguin2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguin3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguin4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguin5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphere1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphere2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphere3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphere4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphere5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphereBox1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphereBox2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphereBox3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphereBox4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\penguinGuitarSphereBox5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\poster1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Debug\TestData\poster2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Debug\TestData\boxes1Depth.csv" />
+    <None Include="Debug\TestData\boxes1RGBA.csv" />
+    <None Include="Debug\TestData\boxes2Depth.csv" />
+    <None Include="Debug\TestData\boxes2RGBA.csv" />
+    <None Include="Debug\TestData\boxes3Depth.csv" />
+    <None Include="Debug\TestData\boxes3RGBA.csv" />
+    <None Include="Debug\TestData\boxes4Depth.csv" />
+    <None Include="Debug\TestData\boxes4RGBA.csv" />
+    <None Include="Debug\TestData\boxes5Depth.csv" />
+    <None Include="Debug\TestData\boxes5RGBA.csv" />
+    <None Include="Debug\TestData\father1Depth.csv" />
+    <None Include="Debug\TestData\father1RGBA.csv" />
+    <None Include="Debug\TestData\father2Depth.csv" />
+    <None Include="Debug\TestData\father2RGBA.csv" />
+    <None Include="Debug\TestData\father3Depth.csv" />
+    <None Include="Debug\TestData\father3RGBA.csv" />
+    <None Include="Debug\TestData\father4Depth.csv" />
+    <None Include="Debug\TestData\father4RGBA.csv" />
+    <None Include="Debug\TestData\father5Depth.csv" />
+    <None Include="Debug\TestData\father5RGBA.csv" />
+    <None Include="Debug\TestData\littleBro1Depth.csv" />
+    <None Include="Debug\TestData\littleBro1RGBA.csv" />
+    <None Include="Debug\TestData\littleBro2Depth.csv" />
+    <None Include="Debug\TestData\littleBro2RGBA.csv" />
+    <None Include="Debug\TestData\littleBro3Depth.csv" />
+    <None Include="Debug\TestData\littleBro3RGBA.csv" />
+    <None Include="Debug\TestData\littleBro4Depth.csv" />
+    <None Include="Debug\TestData\littleBro4RGBA.csv" />
+    <None Include="Debug\TestData\littleBro5Depth.csv" />
+    <None Include="Debug\TestData\littleBro5RGBA.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere1Depth.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere1RGBA.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere2Depth.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere2RGBA.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere3Depth.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere3RGBA.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere4Depth.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere4RGBA.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere5Depth.csv" />
+    <None Include="Debug\TestData\littleBroGuitarBoxesSphere5RGBA.csv" />
+    <None Include="Debug\TestData\penguin1Depth.csv" />
+    <None Include="Debug\TestData\penguin1RGBA.csv" />
+    <None Include="Debug\TestData\penguin2Depth.csv" />
+    <None Include="Debug\TestData\penguin2RGBA.csv" />
+    <None Include="Debug\TestData\penguin3Depth.csv" />
+    <None Include="Debug\TestData\penguin3RGBA.csv" />
+    <None Include="Debug\TestData\penguin4Depth.csv" />
+    <None Include="Debug\TestData\penguin4RGBA.csv" />
+    <None Include="Debug\TestData\penguin5Depth.csv" />
+    <None Include="Debug\TestData\penguin5RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere1Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere1RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere2Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere2RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere3Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere3RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere4Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere4RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere5Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphere5RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox1Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox1RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox2Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox2RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox3Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox3RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox4Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox4RGBA.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox5Depth.csv" />
+    <None Include="Debug\TestData\penguinGuitarSphereBox5RGBA.csv" />
+    <None Include="Debug\TestData\poster1Depth.csv" />
+    <None Include="Debug\TestData\poster1RGBA.csv" />
+    <None Include="Debug\TestData\poster2Depth.csv" />
+    <None Include="Debug\TestData\poster2RGBA.csv" />
   </ItemGroup>
 </Project>
