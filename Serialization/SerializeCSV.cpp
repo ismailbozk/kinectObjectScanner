@@ -22,7 +22,7 @@ void SerializeCSV::serialize()
 		{
 			while(getline(depthFile, line))
 			{
-				//cout << line << '\n';
+				cout << line << '\n';
 			}
 		}
 		else
