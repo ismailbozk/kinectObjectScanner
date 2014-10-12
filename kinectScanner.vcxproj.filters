@@ -21,12 +21,18 @@
     <ClCompile Include="Serialization\SerializeCSV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Serialization\SerializationUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Serialization\SerializeCSV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization\SerializationUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
