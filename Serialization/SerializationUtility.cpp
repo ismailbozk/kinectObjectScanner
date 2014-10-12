@@ -31,8 +31,11 @@ std::vector<short> SerializationUtility::getDepthData(std::string filePrefix)
 	{
 		while(getline(depthFile, line))
 		{
-			short num = atoi(line.c_str());
-			depthData.push_back(num);
+			if (line.size() > 0)
+			{
+				short num = atoi(line.c_str());
+				depthData.push_back(num);
+			}
 		}
 	}
 	return depthData;
@@ -49,25 +52,56 @@ std::vector<cv::Vec3b> SerializationUtility::getColorData(std::string filePrefix
 	{
 		while(getline(colorFile, line))
 		{
-			std::stringstream ss(line);
-			string token;
+			if (line.size() > 0)
+			{
+				std::stringstream ss(line);
+				string token;
 
-			std::getline(ss, token, ';');
-			//std::cout << token << '\n';
-			uchar r = atoi(token.c_str());
-			std::getline(ss, token, ';');
-			//std::cout << token << '\n';
-			uchar g = atoi(token.c_str());
-			std::getline(ss, token, ';');
-			//std::cout << token << '\n';
-			uchar b = atoi(token.c_str());
+				std::getline(ss, token, ';');
+				//std::cout << token << '\n';
+				uchar r = atoi(token.c_str());
+				std::getline(ss, token, ';');
+				//std::cout << token << '\n';
+				uchar g = atoi(token.c_str());
+				std::getline(ss, token, ';');
+				//std::cout << token << '\n';
+				uchar b = atoi(token.c_str());
 
-			cv::Vec3b color = cv::Vec3b(r, g, b);
+				cv::Vec3b color = cv::Vec3b(r, g, b);
 
-			colorData.push_back(color);
+				colorData.push_back(color);
+			}
 		}
 	}
 	return colorData;
+}
+
+void SerializationUtility::writeData()
+{
+	vector<short> depthData = SerializationUtility::getDepthData("boxes1");
+
+	std::ofstream file;
+	file.open(testDataPath + "1", std::ios_base::binary);
+	file.write((char*)(&depthData[0]), depthData.size() * sizeof(depthData[0]));
+}
+
+void SerializationUtility::readData()
+{
+	vector<short> depthData = SerializationUtility::getDepthData("boxes1");
+
+	// open the file:
+    std::streampos fileSize;
+	std::ifstream file(testDataPath + "1", std::ios::binary);
+
+    // get its size:
+    file.seekg(0, std::ios::end);
+	fileSize = (file.tellg() );
+    file.seekg(0, std::ios::beg);
+
+    // read the data:
+    std::vector<short> fileData(fileSize / (sizeof(short) / sizeof(uchar)));
+    file.read((char*) &fileData[0], fileSize);
+
 }
 
 /* Option 1

@@ -9,6 +9,9 @@ public:
 	static cv::Mat getGrayScaleImage(std::string);
 	static std::vector<short> getDepthData(std::string filePrefix);
 	static std::vector<cv::Vec3b> getColorData(std::string filePrefix);
+
+	static void SerializationUtility::writeData();
+	static void SerializationUtility::readData();
 };
 
 #endif

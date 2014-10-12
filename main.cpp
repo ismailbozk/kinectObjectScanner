@@ -11,9 +11,12 @@ using namespace std;
 
 int main( int argc, char** argv )
 {
-	cv::Mat image = SerializationUtility::getGrayScaleImage("boxes1");
+	/*cv::Mat image = SerializationUtility::getGrayScaleImage("boxes1");
 	std::vector<short> depth = SerializationUtility::getDepthData("boxes1");
-	std::vector<cv::Vec3b> color = SerializationUtility::getColorData("boxes1");
+	std::vector<cv::Vec3b> color = SerializationUtility::getColorData("boxes1");*/
+
+	SerializationUtility::writeData();
+	SerializationUtility::readData();
 
 	char endOfTheLine;
 	std::cout << "Terminated!";
