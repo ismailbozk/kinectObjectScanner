@@ -4,7 +4,7 @@
 class SerializationUtility
 {
 public:
-	static void deserializeKinectOutputs(string filePrefix, short[]& depthData);
+	//static void deserializeKinectOutputs(string filePrefix, short[]& depthData);
 
 };
 

@@ -4,30 +4,27 @@
 #include <fstream>
 #include <string>
 
-using namespace std;
-using namespace System;
-using namespace System::IO;
-using namespace System::Collections;
-using namespace System::Runtime::Serialization::Formatters::Binary;
-using namespace System::Runtime::Serialization;
+//using namespace std;
+//using namespace System;
+//using namespace System::IO;
 
-static const string testDataPath = "C:\\Users\\Grey\\Documents\\DEV\\kinectScanner\\TestData\\";
+const static std::string testDataPath = "C:\\Users\\Grey\\Documents\\DEV\\kinectScanner\\TestData\\";
 
 void SerializeCSV::serialize()
 	{
-		string line;
-		string path = (testDataPath + "boxes1Depth.csv");
-		ifstream depthFile(path);
+		std::string line;
+		std::string path = (testDataPath + "boxes1Depth.csv");
+		std::ifstream depthFile(path);
 		if (depthFile.is_open())
 		{
 			while(getline(depthFile, line))
 			{
-				cout << line << '\n';
+				std::cout << line << '\n';
 			}
 		}
 		else
 		{
-			cout << "Unable to open file"; 
+			std::cout << "Unable to open file"; 
 		}
 
 	}

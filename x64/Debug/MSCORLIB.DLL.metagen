@@ -1613,6 +1613,7 @@ Struct System.DateTime: AutoLayout, AnsiClass, Class, Public, Sealed, Serializab
     GetDateTimeFormats(Char, IFormatProvider): PrivateScope, Public, HideBySig
     GetTypeCode(): PrivateScope, Public, Final, Virtual, HideBySig, VtableLayoutMask
     TryCreate(Int32, Int32, Int32, Int32, Int32, Int32, Int32, DateTime&(Out)): PrivateScope, Assembly, Static, HideBySig
+    EnableAmPmParseAdjustment(): PrivateScope, Assembly, Static, HideBySig, PinvokeImpl, HasSecurity
 Struct System.DateTimeKind: AutoLayout, AnsiClass, Class, Public, Sealed, Serializable
   :System.Enum
   Fields:
@@ -7588,6 +7589,7 @@ Class System.Threading.CompressedStack: AutoLayout, AnsiClass, Class, Public, Se
     TryCode tryCode IsVolatile : Assembly, Static
     CleanupCode cleanupCode IsVolatile : Assembly, Static
   Properties:
+    Boolean CanSkipEvaluation 'get set' : 
     System.Security.PermissionListSet PLS 'get ' : 
     System.Threading.SafeCompressedStackHandle CompressedStackHandle 'get set' : 
   Methods:
@@ -7606,6 +7608,7 @@ Class System.Threading.CompressedStack: AutoLayout, AnsiClass, Class, Public, Se
     IsImmediateCompletionCandidate(SafeCompressedStackHandle, CompressedStack&(Out)): PrivateScope, Assembly, Static, HideBySig
     GetDomainCompressedStack(SafeCompressedStackHandle, Int32): PrivateScope, Assembly, Static, HideBySig
     GetHomogeneousPLS(PermissionListSet): PrivateScope, Assembly, Static, HideBySig
+    get_CanSkipEvaluation(): PrivateScope, Assembly, HideBySig, SpecialName
     get_PLS(): PrivateScope, Assembly, HideBySig, SpecialName
     GetObjectData(SerializationInfo, StreamingContext): PrivateScope, Public, Final, Virtual, HideBySig, VtableLayoutMask
     get_CompressedStackHandle(): PrivateScope, Assembly, HideBySig, SpecialName
@@ -7614,7 +7617,9 @@ Class System.Threading.CompressedStack: AutoLayout, AnsiClass, Class, Public, Se
     SetAppDomainStack(CompressedStack): PrivateScope, Assembly, Static, HideBySig
     GetCompressedStackThread(): PrivateScope, Assembly, Static, HideBySig
     CheckDemand(CodeAccessPermission, PermissionToken, RuntimeMethodHandleInternal): PrivateScope, Assembly, HideBySig
+    CheckDemandNoHalt(CodeAccessPermission, PermissionToken, RuntimeMethodHandleInternal): PrivateScope, Assembly, HideBySig
     CheckSetDemand(PermissionSet, RuntimeMethodHandleInternal): PrivateScope, Assembly, HideBySig
+    CheckSetDemandWithModificationNoHalt(PermissionSet, PermissionSet&(Out), RuntimeMethodHandleInternal): PrivateScope, Assembly, HideBySig
     DemandFlagsOrGrantSet(Int32, PermissionSet): PrivateScope, Assembly, HideBySig
     GetZoneAndOrigin(ArrayList, ArrayList, PermissionToken, PermissionToken): PrivateScope, Assembly, HideBySig
     CompleteConstruction(CompressedStack): PrivateScope, Assembly, HideBySig
@@ -12885,6 +12890,7 @@ Interface System.Collections.Generic.IArraySortHelper`1[TKey]: AutoLayout, AnsiC
 Class System.Collections.Generic.IntrospectiveSortUtilities: AutoLayout, AnsiClass, Class, Abstract, Sealed, BeforeFieldInit
   Fields:
     Int32 IntrosortSizeThreshold = 16 : Assembly, Static, Literal, HasDefault
+    Int32 QuickSortDepthThreshold = 32 : Assembly, Static, Literal, HasDefault
   Methods:
     FloorLog2(Int32): PrivateScope, Assembly, Static, HideBySig
     ThrowOrIgnoreBadComparer(Object): PrivateScope, Assembly, Static, HideBySig
@@ -12900,6 +12906,7 @@ Class System.Collections.Generic.ArraySortHelper`1[T]: AutoLayout, AnsiClass, Cl
     Sort(T[], Int32, Int32, IComparer`1): PrivateScope, Public, Final, Virtual, HideBySig, VtableLayoutMask
     BinarySearch(T[], Int32, Int32, T, IComparer`1): PrivateScope, Public, Final, Virtual, HideBySig, VtableLayoutMask
     InternalBinarySearch(T[], Int32, Int32, T, IComparer`1): PrivateScope, Assembly, Static, HideBySig
+    DepthLimitedQuickSort(T[], Int32, Int32, IComparer`1, Int32): PrivateScope, Assembly, Static, HideBySig
     IntrospectiveSort(T[], Int32, Int32, IComparer`1): PrivateScope, Assembly, Static, HideBySig
 Class System.Collections.Generic.GenericArraySortHelper`1[T]: AutoLayout, AnsiClass, Class, Serializable, BeforeFieldInit
   Type parameter: T, System.IComparable`1[T]
@@ -12927,6 +12934,7 @@ Class System.Collections.Generic.ArraySortHelper`2[TKey,TValue]: AutoLayout, Ans
     get_Default(): PrivateScope, Public, Static, HideBySig, SpecialName
     CreateArraySortHelper(): PrivateScope, Public, Static, HideBySig
     Sort(TKey[], TValue[], Int32, Int32, IComparer`1): PrivateScope, Public, Final, Virtual, HideBySig, VtableLayoutMask
+    DepthLimitedQuickSort(TKey[], TValue[], Int32, Int32, IComparer`1, Int32): PrivateScope, Assembly, Static, HideBySig
     IntrospectiveSort(TKey[], TValue[], Int32, Int32, IComparer`1): PrivateScope, Assembly, Static, HideBySig
 Class System.Collections.Generic.GenericArraySortHelper`2[TKey,TValue]: AutoLayout, AnsiClass, Class, BeforeFieldInit
   Type parameter: TKey, System.IComparable`1[TKey]
@@ -17652,14 +17660,4 @@ Struct System.Globalization.CalendarAlgorithmType: AutoLayout, AnsiClass, Class,
   :System.Enum
   Fields:
     Int32 value__ : Public, SpecialName, RTSpecialName
-    System.Globalization.CalendarAlgorithmType Unknown = 0 : Public, Static, Literal, HasDefault
-    System.Globalization.CalendarAlgorithmType SolarCalendar = 1 : Public, Static, Literal, HasDefault
-    System.Globalization.CalendarAlgorithmType LunarCalendar = 2 : Public, Static, Literal, HasDefault
-    System.Globalization.CalendarAlgorithmType LunisolarCalendar = 3 : Public, Static, Literal, HasDefault
-Struct System.Globalization.CalendarWeekRule: AutoLayout, AnsiClass, Class, Public, Sealed, Serializable
-  :System.Enum
-  Fields:
-    Int32 value__ : Public, SpecialName, RTSpecialName
-    System.Globalization.CalendarWeekRule FirstDay = 0 : Public, Static, Literal, HasDefault
-    System.Globalization.CalendarWeekRule FirstFullWeek = 1 : Public, Static, Literal, HasDefault
-    System.Globalization.CalendarWeekRule FirstFourDayW
+    System.Globalization.CalendarAlgorithmType Un
