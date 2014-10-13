@@ -1,3 +1,5 @@
 kinectScanner.opensdf
 *.tlog
 x64/Debug/kinectScanner.unsuccessfulbuild
+kinectScanner.v11.suo
+*.obj
