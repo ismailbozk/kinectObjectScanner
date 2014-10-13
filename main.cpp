@@ -5,12 +5,22 @@
 #include <thread>
 #include <process.h>
 
+#include <boost/lambda/lambda.hpp>
+#include <iterator>
+#include <algorithm>
+
 using namespace cv;
 using namespace std;
 
-
 int main( int argc, char** argv )
 {
+	using namespace boost::lambda;
+    typedef std::istream_iterator<int> in;
+
+    std::for_each(
+        in(std::cin), in(), std::cout << (_1 * 3) << " " );
+
+
 	cv::Mat image = SerializationUtility::getGrayScaleImage("boxes1");
 	std::vector<short> depth = SerializationUtility::getDepthData("boxes1");
 	std::vector<cv::Vec3b> color = SerializationUtility::getColorData("boxes1");
