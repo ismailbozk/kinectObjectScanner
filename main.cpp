@@ -5,10 +5,6 @@
 #include <thread>
 #include <process.h>
 
-#include <boost/lambda/lambda.hpp>
-#include <iterator>
-#include <algorithm>
-
 using namespace cv;
 using namespace std;
 
@@ -31,11 +27,3 @@ int main( int argc, char** argv )
 	
     return 0;
 }
-
-//void testbla()
-//{
-//	cv::Mat image = SerializationUtility::getGrayScaleImage("boxes1");
-//
-//	cv::imshow("image test", image);
-//	cv::waitKey(1000);
-//}
