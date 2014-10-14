@@ -9,16 +9,34 @@
 #include <iterator>
 #include <algorithm>
 
+#include <boost/thread.hpp>
+#include <boost/date_time.hpp>
+
 using namespace cv;
 using namespace std;
 
+void workerFunc()
+{
+	boost::posix_time::seconds workTime(3);
+
+	std::cout << "Worker: running" << std::endl;
+
+	boost::this_thread::sleep(workTime);
+
+	std::cout << "Worker: Finished" << std::endl;
+}
+
 int main( int argc, char** argv )
 {
-	using namespace boost::lambda;
-    typedef std::istream_iterator<int> in;
+	std::cout << "main: startup" << std::endl;
 
-    std::for_each(
-        in(std::cin), in(), std::cout << (_1 * 3) << " " );
+	boost::thread workerThread(workerFunc);
+
+	std::cout << "main: waiting for thread" << std::endl;
+
+	workerThread.join();
+
+	std::cout << "main: done" << endl;
 
 
 	cv::Mat image = SerializationUtility::getGrayScaleImage("boxes1");
@@ -31,6 +49,7 @@ int main( int argc, char** argv )
 	
     return 0;
 }
+
 
 //void testbla()
 //{
