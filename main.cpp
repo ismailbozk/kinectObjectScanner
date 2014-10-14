@@ -1,8 +1,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "Serialization\SerializationUtility.h"
-#include "Utilities\PlayGround.h"
+#include "PlayGround.h"
+#include "Utilities\SerializationUtility.h"
 
 #include <iostream>
 
@@ -15,6 +15,7 @@ using namespace std;
 void playgroundStartPlay()
 {
 	PlayGround pg = PlayGround();
+	pg.startToPlay();
 }
 
 int main( int argc, char** argv )

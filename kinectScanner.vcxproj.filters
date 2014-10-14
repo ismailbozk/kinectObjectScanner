@@ -21,7 +21,10 @@
     <ClCompile Include="Serialization\SerializeCSV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialization\SerializationUtility.cpp">
+    <ClCompile Include="PlayGround.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\SerializationUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +35,10 @@
     <ClInclude Include="Serialization\SerializeCSV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Serialization\SerializationUtility.h">
+    <ClInclude Include="PlayGround.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\SerializationUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

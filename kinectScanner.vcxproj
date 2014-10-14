@@ -82,12 +82,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Serialization\SerializationUtility.cpp" />
+    <ClCompile Include="PlayGround.cpp" />
+    <ClCompile Include="Utilities\SerializationUtility.cpp" />
     <ClCompile Include="Serialization\SerializeCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlayGround.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Serialization\SerializationUtility.h" />
+    <ClInclude Include="Utilities\SerializationUtility.h" />
     <ClInclude Include="Serialization\SerializeCSV.h" />
   </ItemGroup>
   <ItemGroup>
