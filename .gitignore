@@ -5,3 +5,7 @@ kinectScanner.v11.suo
 *.obj
 *.sdf
 .gitignore.rej
+*.lastbuildstate
+*.log
+*.pdb
+*.idb
