@@ -1,3 +1,5 @@
+#include <opencv2/core/core.hpp>
+
 #ifndef CALIBRATOR_H
 #define CALIBRATOR_H
 
@@ -9,8 +11,7 @@ typedef enum
 class Calibrator
 {
 public:
-	static cv::Point3d CalibrateDepthFrameOnDepthCloud(cv::Point3d point)
-;
+	static cv::Point3d Calibrator::CalibrateDepthFrameOnDepthCloud(cv::Point3d point);
 
 };
 

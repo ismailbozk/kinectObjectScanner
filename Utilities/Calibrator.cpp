@@ -10,7 +10,7 @@ double R31 = 1.7470421412464927e-02f; double R32 = 1.2275341476520762e-02f; doub
 double T11 = 1.9985242312092553e-02f; double T12 = -7.4423738761617583e-04f; double T13 = -1.0916736334336222e-02f;
 
 
-cv::Point3d CalibrateDepthFrameOnDepthCloud(cv::Point3d point)
+cv::Point3d Calibrator::CalibrateDepthFrameOnDepthCloud(cv::Point3d point)
 {
 	cv::Point3d result  = cv::Point3d();
 

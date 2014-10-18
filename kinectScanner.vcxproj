@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseKinectModel.cpp" />
     <ClCompile Include="Utilities\DimensionConverter.cpp" />
     <ClCompile Include="Utilities\Calibrator.cpp" />
     <ClCompile Include="main.cpp" />
@@ -89,6 +90,7 @@
     <ClCompile Include="Serialization\SerializeCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseKinectModel.h" />
     <ClInclude Include="Utilities\DimensionConverter.h" />
     <ClInclude Include="Utilities\Calibrator.h" />
     <ClInclude Include="PlayGround.h" />
