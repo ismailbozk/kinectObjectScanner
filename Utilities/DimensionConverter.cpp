@@ -16,7 +16,7 @@ const double fy_d = 1.0 / 5.9104053696870778e+02;
 const double cx_d = 3.3930780975300314e+02;
 const double cy_d = 2.4273913761751615e+02;
 
-cv::Point3d DimensionConverter::DepthToWorld(int x, int y, short depthValue)
+cv::Point3d DimensionConverter::DepthTo3D(int x, int y, short depthValue)
 {
 	cv::Point3d result = cv::Point3d();
 	
@@ -29,9 +29,9 @@ cv::Point3d DimensionConverter::DepthToWorld(int x, int y, short depthValue)
 	return result;
 }
 
-cv::Point2i DimensionConverter::DepthPointCloudToRGBCameraFrame(cv::Point3d depthPoint)
+cv::Point2i DimensionConverter::From3DPointToRGBCameraFrame(cv::Point3d point3D)
 {
-	cv::Point3d transformedPoint = Calibrator::CalibrateDepthFrameOnDepthCloud(depthPoint);
+	cv::Point3d transformedPoint = Calibrator::CalibrateDepthFrameOnDepthCloud(point3D);
 
 	double invZ = 1.0 / transformedPoint.z;
 

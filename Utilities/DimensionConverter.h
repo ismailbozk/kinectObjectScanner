@@ -6,8 +6,8 @@
 class DimensionConverter
 {
 public:
-	static cv::Point3d DimensionConverter::DepthToWorld(int x, int y, short depthValue);
-	static cv::Point2i DimensionConverter::DepthPointCloudToRGBCameraFrame(cv::Point3d depthPoint);
+	static cv::Point3d DimensionConverter::DepthTo3D(int x, int y, short depthValue);
+	static cv::Point2i DimensionConverter::From3DPointToRGBCameraFrame(cv::Point3d depthPoint);
 };
 
 #endif

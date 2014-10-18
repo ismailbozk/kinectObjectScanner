@@ -33,7 +33,7 @@
     <ClCompile Include="Utilities\DimensionConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseKinectModel.cpp">
+    <ClCompile Include="Models\BaseKinectModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="Utilities\DimensionConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseKinectModel.h">
+    <ClInclude Include="Models\BaseKinectModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
