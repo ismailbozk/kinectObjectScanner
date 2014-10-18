@@ -81,12 +81,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Utilities\DimensionConverter.cpp" />
+    <ClCompile Include="Utilities\Calibrator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayGround.cpp" />
     <ClCompile Include="Utilities\SerializationUtility.cpp" />
     <ClCompile Include="Serialization\SerializeCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utilities\DimensionConverter.h" />
+    <ClInclude Include="Utilities\Calibrator.h" />
     <ClInclude Include="PlayGround.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utilities\SerializationUtility.h" />
