@@ -15,6 +15,12 @@ static const std::string testGrayImageExtension = ".bmp";
 static const std::string testDepthDataPostfix = "Depth.csv";
 static const std::string testRGBDataPostfix = "RGB.csv";
 
+BaseKinectModel SerializationUtility::getKinectDataWithFilePrefix(std::string filePrefix)
+{
+	BaseKinectModel model = BaseKinectModel::BaseKinectModelWithGrayImage(SerializationUtility::getGrayScaleImage(filePrefix), SerializationUtility::getDepthData(filePrefix));
+	return model;
+}
+
 cv::Mat SerializationUtility::getGrayScaleImage(std::string filePrefix)
 {
 	return cv::imread(testDataPath + filePrefix + testGrayImageExtension, CV_LOAD_IMAGE_UNCHANGED);
