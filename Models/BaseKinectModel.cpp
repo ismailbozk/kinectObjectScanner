@@ -40,11 +40,4 @@ BaseKinectModel BaseKinectModel::BaseKinectModelWithGrayImage(cv::Mat grayImage,
 	return model;
 }
 
-//BaseKinectModel BaseKinectModel::BaseKinectModelWithColoredImage(cv::Mat coloredImage, std::vector<short> rawDepthData)
-//{
-//	BaseKinectModel model = BaseKinectModel();
-//
-//
-//	return model;
-//}
 
