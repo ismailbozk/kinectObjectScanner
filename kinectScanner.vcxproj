@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Utilities\Features2DUtility.cpp" />
     <ClCompile Include="Models\DepthScale.cpp" />
     <ClCompile Include="Models\BaseKinectModel.cpp" />
     <ClCompile Include="Utilities\DimensionConverter.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="Serialization\SerializeCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utilities\Features2DUtility.h" />
     <ClInclude Include="Models\DepthScale.h" />
     <ClInclude Include="Models\BaseKinectModel.h" />
     <ClInclude Include="Utilities\DimensionConverter.h" />

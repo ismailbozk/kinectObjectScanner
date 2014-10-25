@@ -53,7 +53,7 @@ void PlayGround::startToPlay()
 	//matcher.match(descriptors1, descriptors2, matches);
 	matcher.knnMatch(descriptors1, descriptors2, matches, k, mask, false);
 
-
+	matches[1]
 
 	//-- Draw matches
 	//Mat imgMatches;
