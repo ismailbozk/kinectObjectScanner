@@ -1,15 +1,16 @@
 #include "PlayGround.h"
 
 #include <opencv2/core/core.hpp>
-//#include <opencv2/features2d/features2d.hpp>
 #include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
 #include <opencv2/legacy/legacy.hpp>
 
 #include "Utilities\Features2DUtility.h"
-#include "Models\BaseKinectModel.h"
 #include "Utilities\SerializationUtility.h"
+#include "Utilities\DrawUtility.h"
+
+#include "Models\BaseKinectModel.h"
 #include "Models\DepthScale.h"
 
 
@@ -58,13 +59,6 @@ void PlayGround::startToPlay()
 	vector<bool> mask(matches.size(), true);
 	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
 
-	//-- Draw matches
-	//Mat imgMatches;
-	//drawMatches(f1.grayImage, keyPoints1, f2.grayImage,keyPoints2, matches, imgMatches);
-	//
-	////-- Show detected matches
-	//imshow("Matches", imgMatches );
-
-	//waitKey(0);
+	DrawUtility::DrawMatches(mask, matches, f1.grayImage, keyPoints1, f2.grayImage, keyPoints2);
 
 }

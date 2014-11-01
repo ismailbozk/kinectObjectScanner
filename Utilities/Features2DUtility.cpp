@@ -24,6 +24,9 @@ void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>> m
 	}
 	else
 	{
-		std::cout << "Features2DUtility::VoteForUniqueness mask and match size must be equal!!!" << endl;
+		string errorMessage = "Features2DUtility::VoteForUniqueness mask and match size must be equal!!!";
+		cout << errorMessage << endl;
+		throw std::invalid_argument(errorMessage );
 	}
 }
+

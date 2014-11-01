@@ -1,9 +1,9 @@
+#ifndef FEATURES2DUTILITY_H
+#define FEATURES2DUTILITY_H
+
 #include <vector>
 #include <opencv2/core/core.hpp>
 #include "opencv2/nonfree/features2d.hpp"
-
-#ifndef FEATURES2DUTILITY_H
-#define FEATURES2DUTILITY_H
 
 class Features2DUtility
 {
