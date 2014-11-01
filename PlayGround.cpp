@@ -7,9 +7,11 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #include <opencv2/legacy/legacy.hpp>
 
+#include "Utilities\Features2DUtility.h"
 #include "Models\BaseKinectModel.h"
 #include "Utilities\SerializationUtility.h"
 #include "Models\DepthScale.h"
+
 
 
 using namespace cv;
@@ -49,11 +51,12 @@ void PlayGround::startToPlay()
 	BFMatcher matcher(NORM_L2, false);
 
 	std::vector<vector<DMatch>> matches;
-	Mat mask;
+	Mat maskKnn;
 	//matcher.match(descriptors1, descriptors2, matches);
-	matcher.knnMatch(descriptors1, descriptors2, matches, k, mask, false);
+	matcher.knnMatch(descriptors1, descriptors2, matches, k, maskKnn, false);
 
-	matches[1]
+	vector<bool> mask(matches.size(), true);
+	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
 
 	//-- Draw matches
 	//Mat imgMatches;
