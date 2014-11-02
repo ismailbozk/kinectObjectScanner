@@ -55,11 +55,11 @@ void DrawUtility::DrawMatches(std::vector<bool> mask, std::vector<std::vector<cv
 				KeyPoint trainKeyPoint = trainKeyPoints[currentMatch.trainIdx];
 
 				//1. draw query image feature circle
-				circle(imgMatches, queryKeyPoint.pt, queryKeyPoint.size, drawColor, 1, 8, 0);
+				circle(imgMatches, queryKeyPoint.pt, (queryKeyPoint.size / 2), drawColor, 1, 8, 0);
 				//2. Draw train image feature circle
 				Point2f trainFeaturePoint = trainKeyPoint.pt;
 				trainFeaturePoint.x = trainFeaturePoint.x + queryImage.size().width;
-				circle(imgMatches, trainFeaturePoint, trainKeyPoint.size, drawColor, 1, 8, 0);
+				circle(imgMatches, trainFeaturePoint, (trainKeyPoint.size / 2), drawColor, 1, 8, 0);
 				//3. Finally line two circle
 				line(imgMatches, queryKeyPoint.pt, trainFeaturePoint, drawColor, 1, 8, 0);
 			}

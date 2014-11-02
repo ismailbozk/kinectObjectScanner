@@ -11,3 +11,4 @@ kinectScanner.v11.suo
 *.idb
 x64/Debug/kinectScanner.exe
 *.ilk
+*.rej
