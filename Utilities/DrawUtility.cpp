@@ -10,6 +10,7 @@ using namespace std;
 using namespace cv;
 
 static Scalar drawColor = Scalar(0, 255, 0, 1);
+static float pi = 3.14159265358979323846;
 
 void DrawUtility::DrawMatches(std::vector<bool> mask, std::vector<std::vector<cv::DMatch>> matches, cv::Mat queryImage, std::vector<cv::KeyPoint> queryKeyPoints, cv::Mat trainImage, std::vector<cv::KeyPoint> trainKeyPoints)
 {
@@ -55,11 +56,11 @@ void DrawUtility::DrawMatches(std::vector<bool> mask, std::vector<std::vector<cv
 				KeyPoint trainKeyPoint = trainKeyPoints[currentMatch.trainIdx];
 
 				//1. draw query image feature circle
-				circle(imgMatches, queryKeyPoint.pt, queryKeyPoint.size, drawColor, 1, 8, 0);
+				circle(imgMatches, queryKeyPoint.pt, (queryKeyPoint.size / (2 * pi)), drawColor, 1, 8, 0);
 				//2. Draw train image feature circle
 				Point2f trainFeaturePoint = trainKeyPoint.pt;
 				trainFeaturePoint.x = trainFeaturePoint.x + queryImage.size().width;
-				circle(imgMatches, trainFeaturePoint, trainKeyPoint.size, drawColor, 1, 8, 0);
+				circle(imgMatches, trainFeaturePoint, (trainKeyPoint.size / (2 * pi)), drawColor, 1, 8, 0);
 				//3. Finally line two circle
 				line(imgMatches, queryKeyPoint.pt, trainFeaturePoint, drawColor, 1, 8, 0);
 			}
