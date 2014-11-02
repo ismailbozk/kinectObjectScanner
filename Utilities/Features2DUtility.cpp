@@ -1,4 +1,5 @@
 #include "Features2DUtility.h"
+
 #include <iostream>
 
 using namespace std;
@@ -28,5 +29,19 @@ void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>> m
 		cout << errorMessage << endl;
 		throw std::invalid_argument(errorMessage );
 	}
+}
+
+std::vector<DepthScale> Features2DUtility::GetInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
+{
+	vector<DepthScale> depthScales(keyPoints.size(), DepthScale(0, 0));
+
+	for (int i = 0; i < keyPoints.size(); i++)
+	{
+		cv::KeyPoint currentPoint = keyPoints[i];
+		short currentDepth = kinectModel.calibratedDepth[currentPoint.pt.y * kinectModel.grayImage.cols + currentPoint.pt.x];
+		depthScales[i] = DepthScale(currentDepth, currentPoint.size / 2);
+	}
+
+	return depthScales;
 }
 
