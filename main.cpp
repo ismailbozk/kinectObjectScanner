@@ -2,6 +2,7 @@
 //#include <opencv2/highgui/highgui.hpp>
 
 #include "PlayGround.h"
+#include "PlayGroundBinTest.h"
 #include "Utilities\SerializationUtility.h"
 #include "Utilities\Calibrator.h"
 
@@ -20,9 +21,8 @@ void playgroundStartPlay()
 
 int main( int argc, char** argv )
 {
-
-	PlayGround pg = PlayGround();
-	pg.startToPlay();
+	PlayGroundBinTest pgBt = PlayGroundBinTest();
+	pgBt.startToPlay();
 
 	char endofTheLine;
 	cout << "Terminated!",
