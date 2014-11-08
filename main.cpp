@@ -20,7 +20,6 @@ void playgroundStartPlay()
 
 int main( int argc, char** argv )
 {
-
 	PlayGround pg = PlayGround();
 	pg.startToPlay();
 
