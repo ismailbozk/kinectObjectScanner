@@ -18,9 +18,10 @@
 using namespace cv;
 using namespace std;
 
-static short surfHessianThreshold = 300;
+static short surfHessianThreshold = 10000;
 static float uniquenessThreshold = 0.8f;
 static short k = 2;
+static float uniqThreshold = 0.8f;
 
 //the whole purpose of that experiment is dividing the all descriptors into the bins for model and observed descriptor by using thier depthscale values
 //then use that divided depthscales match the descriptors in the same bins
@@ -74,7 +75,7 @@ void PlayGroundBinTest::startToPlay()
 	matcher.knnMatch(descriptors1, descriptors2, matches, k, maskKnn, false);
 
 	vector<bool> mask(matches.size(), true);
-	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
+	Features2DUtility::VoteForUniqueness(matches, uniqThreshold, mask);
 	auto endMatch = std::chrono::high_resolution_clock::now();
 	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(endMatch-beginMatch).count() << "ms " << "Knn Match" <<  std::endl;
 	//==========================================================
@@ -103,10 +104,46 @@ void PlayGroundBinTest::startToPlay()
 	vector<vector<int>> kpIndicesDividedBins1 = PlayGroundBinTest::GetDsIndicesDivideByBins(depthScales1, bins);
 	vector<vector<int>> kpIndicesDividedBins2 = PlayGroundBinTest::GetDsIndicesDivideByBins(depthScales2, bins);
 
+	vector<vector<bool>> maskBT(kpIndicesDividedBins1.size());//for comparing result I need to keep track of the overall mask.
+
 	for(int i = 0; i < kpIndicesDividedBins1.size(); i++)
 	{
-		vector<int> bla = kpIndicesDividedBins1[i];
-		vector<int> bla2 = kpIndicesDividedBins2[i];
+		vector<int> kpIndices1 = kpIndicesDividedBins1[i];
+		vector<int> kpIndices2 = kpIndicesDividedBins2[i];
+
+		//-- Step 1: Gather the keypoints using SURF Detector
+		std::vector<cv::KeyPoint> keyPointsBT1;
+		std::vector<cv::KeyPoint> keyPointsBT2;
+
+		for (int i = 0; i < kpIndices1.size(); i++)
+		{
+			keyPointsBT1.push_back(keyPoints1[kpIndices1[i]]);
+		}
+		for (int i = 0; i < kpIndices2.size(); i++)
+		{
+			keyPointsBT2.push_back(keyPoints2[kpIndices2[i]]);
+		}
+		//==========================================================		
+
+		//-- Step 2: Calculate descriptors (feature vectors)
+		SurfDescriptorExtractor extractor;
+		Mat descriptorsBT1, descriptorsBT2;
+
+		extractor.compute(f1.grayImage, keyPointsBT1, descriptorsBT1);
+		extractor.compute(f2.grayImage, keyPointsBT2, descriptorsBT2);
+		//==========================================================
+
+		//-- Step 3: Matching descriptor vectors with a brute force matcher
+		BFMatcher matcher(NORM_L2, false);
+
+		std::vector<vector<DMatch>> matchesBT;
+		Mat maskKnnBT;
+		matcher.knnMatch(descriptorsBT1, descriptorsBT2, matchesBT, k, maskKnnBT, false);
+
+		vector<bool> maskBTTemp(matchesBT.size(), true);
+		Features2DUtility::VoteForUniqueness(matchesBT, uniqThreshold, maskBTTemp);
+		maskBT[i] = maskBTTemp;
+		//==========================================================									
 	}
 
 
