@@ -18,7 +18,7 @@
 using namespace cv;
 using namespace std;
 
-static short surfHessianThreshold = 10000;
+static short surfHessianThreshold = 100;
 static float uniquenessThreshold = 0.8f;
 static short k = 2;
 static float uniqThreshold = 0.8f;
@@ -96,6 +96,8 @@ void PlayGroundBinTest::startToPlay()
 	bins.push_back(1000000000);
 
 #pragma region Bin Test
+	unsigned long elapsedTime = 0;
+
 	//Get depthScales
 	vector<DepthScale> depthScales1 = Features2DUtility::GetInlierDepthScales(f1, keyPoints1);
 	vector<DepthScale> depthScales2 = Features2DUtility::GetInlierDepthScales(f2, keyPoints2);
@@ -106,6 +108,8 @@ void PlayGroundBinTest::startToPlay()
 
 	vector<vector<bool>> maskBT(kpIndicesDividedBins1.size());//for comparing result I need to keep track of the overall mask.
 
+	
+
 	for(int i = 0; i < kpIndicesDividedBins1.size(); i++)
 	{
 		vector<int> kpIndices1 = kpIndicesDividedBins1[i];
@@ -115,13 +119,13 @@ void PlayGroundBinTest::startToPlay()
 		std::vector<cv::KeyPoint> keyPointsBT1;
 		std::vector<cv::KeyPoint> keyPointsBT2;
 
-		for (int i = 0; i < kpIndices1.size(); i++)
+		for (int ii = 0; ii < kpIndices1.size(); ii++)
 		{
-			keyPointsBT1.push_back(keyPoints1[kpIndices1[i]]);
+			keyPointsBT1.push_back(keyPoints1[kpIndices1[ii]]);
 		}
-		for (int i = 0; i < kpIndices2.size(); i++)
+		for (int ii = 0; ii < kpIndices2.size(); ii++)
 		{
-			keyPointsBT2.push_back(keyPoints2[kpIndices2[i]]);
+			keyPointsBT2.push_back(keyPoints2[kpIndices2[ii]]);
 		}
 		//==========================================================		
 
@@ -134,6 +138,7 @@ void PlayGroundBinTest::startToPlay()
 		//==========================================================
 
 		//-- Step 3: Matching descriptor vectors with a brute force matcher
+		auto beginBinMatch = std::chrono::high_resolution_clock::now();
 		BFMatcher matcher(NORM_L2, false);
 
 		std::vector<vector<DMatch>> matchesBT;
@@ -143,10 +148,13 @@ void PlayGroundBinTest::startToPlay()
 		vector<bool> maskBTTemp(matchesBT.size(), true);
 		Features2DUtility::VoteForUniqueness(matchesBT, uniqThreshold, maskBTTemp);
 		maskBT[i] = maskBTTemp;
-		//==========================================================									
+
+		auto endBinMatch = std::chrono::high_resolution_clock::now();
+		elapsedTime += std::chrono::duration_cast<std::chrono::milliseconds>(endBinMatch-beginBinMatch).count();
+		//==========================================================		
 	}
 
-
+	std::cout << elapsedTime << "ms " << "Bin Match" <<  std::endl;
 
 #pragma endregion
 }
