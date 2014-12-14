@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>> matches, float threshold, std::vector<bool> &mask)
+void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& matches, float threshold, std::vector<bool> &mask)
 {
 	if (mask.size() == matches.size())
 	{
