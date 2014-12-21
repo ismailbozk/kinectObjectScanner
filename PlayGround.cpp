@@ -63,9 +63,10 @@ void PlayGround::startToPlay()
 	
 	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
 
-	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
-
 	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
+
+	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
+	cv::Mat4d transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
 
 
 }

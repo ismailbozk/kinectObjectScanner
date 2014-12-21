@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DEPTHSCALE_H
+#define DEPTHSCALE_H
 class DepthScale
 {
 public: 
@@ -8,4 +9,4 @@ public:
 	short radius;
 	int depthScale;
 };
-
+#endif
