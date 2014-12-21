@@ -9,9 +9,11 @@
 #include "Utilities\Features2DUtility.h"
 #include "Utilities\SerializationUtility.h"
 #include "Utilities\DrawUtility.h"
+#include "Utilities\TransformationUtility.h"
 
 #include "Models\BaseKinectModel.h"
 #include "Models\DepthScale.h"
+#include "Models\Match3D.h"
 
 
 
@@ -27,40 +29,43 @@ PlayGround::PlayGround(void)
 
 void PlayGround::startToPlay()
 {
-	std::string filePrefix1 = "father1", filePrefix2 = "father2";
+	std::string filePrefix1 = "father2", filePrefix2 = "father1";
 
-	BaseKinectModel f1 = SerializationUtility::getKinectDataWithFilePrefix(filePrefix1);
-	BaseKinectModel f2 = SerializationUtility::getKinectDataWithFilePrefix(filePrefix2);
+	BaseKinectModel kinectModelTrain = SerializationUtility::getKinectDataWithFilePrefix(filePrefix1);
+	BaseKinectModel kinectModelTest = SerializationUtility::getKinectDataWithFilePrefix(filePrefix2);
 
 	//-- Step 1: Detect the keypoints using SURF Detector
 	SurfFeatureDetector surfDetector (surfHessianThreshold);
 
-	std::vector<cv::KeyPoint> keyPoints1, keyPoints2;
+	std::vector<cv::KeyPoint> keyPointsTrain, keyPointsTest;
 
-	surfDetector.detect(f1.grayImage, keyPoints1);
-	surfDetector.detect(f2.grayImage, keyPoints2);
+	surfDetector.detect(kinectModelTrain.grayImage, keyPointsTrain);
+	surfDetector.detect(kinectModelTest.grayImage, keyPointsTest);
 
 	//-- Step 2: Calculate descriptors (feature vectors)
 
 	SurfDescriptorExtractor extractor;
-	Mat descriptors1, descriptors2;
+	Mat descriptorsTrain, descriptorsTest;
 	
-	extractor.compute(f1.grayImage, keyPoints1, descriptors1);
-	extractor.compute(f2.grayImage, keyPoints2, descriptors2);
+	extractor.compute(kinectModelTrain.grayImage, keyPointsTrain, descriptorsTrain);
+	extractor.compute(kinectModelTest.grayImage, keyPointsTest, descriptorsTest);
 
 	//-- Step 3: Matching descriptor vectors with a brute force matcher
 	BFMatcher matcher(NORM_L2, false);
 
-	std::vector<vector<DMatch>> matches;
+	vector<vector<DMatch>> matches;
 	Mat maskKnn;
-	//matcher.match(descriptors1, descriptors2, matches);
-	matcher.knnMatch(descriptors1, descriptors2, matches, k, maskKnn, false);
-
-	std::vector<DepthScale> depthScales = Features2DUtility::CreateInlierDepthScales(f1, keyPoints1);
+	//matcher.match(descriptorsTrain, descriptorsTest, matches);
+	matcher.knnMatch(descriptorsTest, descriptorsTrain, matches, k, maskKnn, false);
 
 	vector<bool> mask(matches.size(), true);
+	std::vector<DepthScale> depthScales = Features2DUtility::CreateInlierDepthScales(kinectModelTrain, keyPointsTrain);
+	
 	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
 
-	DrawUtility::DrawMatches(mask, matches, f1.grayImage, keyPoints1, f2.grayImage, keyPoints2);
+	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
+
+	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
+
 
 }

@@ -45,7 +45,10 @@
     <ClCompile Include="Utilities\DrawUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransformationUtility.cpp">
+    <ClCompile Include="Utilities\TransformationUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\Match3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +83,13 @@
     <ClInclude Include="Utilities\DrawUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformationUtility.h">
+    <ClInclude Include="Utilities\TransformationUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\Match3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

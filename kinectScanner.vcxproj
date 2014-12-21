@@ -81,7 +81,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="TransformationUtility.cpp" />
+    <ClCompile Include="Models\Match3D.cpp" />
+    <ClCompile Include="Utilities\TransformationUtility.cpp" />
     <ClCompile Include="Utilities\DrawUtility.cpp" />
     <ClCompile Include="Utilities\Features2DUtility.cpp" />
     <ClCompile Include="Models\DepthScale.cpp" />
@@ -94,7 +95,9 @@
     <ClCompile Include="Serialization\SerializeCSV.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TransformationUtility.h" />
+    <ClInclude Include="Macros.h" />
+    <ClInclude Include="Models\Match3D.h" />
+    <ClInclude Include="Utilities\TransformationUtility.h" />
     <ClInclude Include="Utilities\DrawUtility.h" />
     <ClInclude Include="Utilities\Features2DUtility.h" />
     <ClInclude Include="Models\DepthScale.h" />

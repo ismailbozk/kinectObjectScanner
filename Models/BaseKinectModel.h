@@ -9,6 +9,7 @@ class BaseKinectModel
 public:
 	//default constructors
 	BaseKinectModel();
+	~BaseKinectModel(void);
 
 	//essential Constructor to obtain depthdata and cloud data from raw depth data
 	static BaseKinectModel BaseKinectModel::BaseKinectModelWithGrayImage(cv::Mat, std::vector<short>);

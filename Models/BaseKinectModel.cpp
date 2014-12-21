@@ -40,4 +40,7 @@ BaseKinectModel BaseKinectModel::BaseKinectModelWithGrayImage(cv::Mat grayImage,
 	return *model;
 }
 
+BaseKinectModel::~BaseKinectModel(void)
+{
 
+}

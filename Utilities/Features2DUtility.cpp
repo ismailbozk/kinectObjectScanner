@@ -1,11 +1,15 @@
 #include "Features2DUtility.h"
 
+#include "../Macros.h"
+
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
 void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& matches, float threshold, std::vector<bool> &mask)
 {
+	int currentInliersCount = 0;
 	if (mask.size() == matches.size())
 	{
 		for (int i = 0; i < matches.size(); i++)
@@ -20,8 +24,13 @@ void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& 
 				{
 					mask[i] = false;
 				}
+				else
+				{
+					currentInliersCount++;
+				}
 			}
 		}
+		cout << "Current Inliers Count " << currentInliersCount << endl << endl;
 	}
 	else
 	{
@@ -31,17 +40,16 @@ void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& 
 	}
 }
 
-std::vector<DepthScale> Features2DUtility::CreateInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
+std::vector<DepthScale> Features2DUtility::CreateInlierDepthScales(BaseKinectModel &kinectModel, std::vector<cv::KeyPoint> &keyPoints)
 {
 	vector<DepthScale> depthScales(keyPoints.size(), DepthScale(0, 0));
 
 	for (int i = 0; i < keyPoints.size(); i++)
 	{
 		cv::KeyPoint currentPoint = keyPoints[i];
-		short currentDepth = kinectModel.calibratedDepth[currentPoint.pt.y * kinectModel.grayImage.cols + currentPoint.pt.x];
+		short currentDepth = kinectModel.calibratedDepth[round(currentPoint.pt.y) * kinectModel.grayImage.cols + currentPoint.pt.x];
 		depthScales[i] = DepthScale(currentDepth, currentPoint.size / 2);
 	}
-
 	return depthScales;
 }
 
