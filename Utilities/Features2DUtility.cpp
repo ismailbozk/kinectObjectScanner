@@ -31,7 +31,7 @@ void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& 
 	}
 }
 
-std::vector<DepthScale> Features2DUtility::GetInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
+std::vector<DepthScale> Features2DUtility::CreateInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
 {
 	vector<DepthScale> depthScales(keyPoints.size(), DepthScale(0, 0));
 

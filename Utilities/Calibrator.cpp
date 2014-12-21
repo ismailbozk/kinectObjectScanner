@@ -12,15 +12,15 @@ double T11 = 1.9985242312092553e-02f; double T12 = -7.4423738761617583e-04f; dou
 
 cv::Point3d Calibrator::CalibrateDepthFrameOnDepthCloud(cv::Point3d point)
 {
-	cv::Point3d result  = cv::Point3d();
+	cv::Point3d *result  = new cv::Point3d();
 
-	result.x = (point.x * R11) + (point.y * R21) + (point.z * R31);
-	result.y = (point.x * R12) + (point.y * R22) + (point.z * R32);
-	result.z = (point.x * R13) + (point.y * R23) + (point.z * R33);
+	result->x = (point.x * R11) + (point.y * R21) + (point.z * R31);
+	result->y = (point.x * R12) + (point.y * R22) + (point.z * R32);
+	result->z = (point.x * R13) + (point.y * R23) + (point.z * R33);
 
-	result.x += T11;
-	result.y += T12;
-	result.z += T13;
+	result->x += T11;
+	result->y += T12;
+	result->z += T13;
 
-	return result;
+	return *result;
 }

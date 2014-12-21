@@ -56,7 +56,7 @@ void PlayGround::startToPlay()
 	//matcher.match(descriptors1, descriptors2, matches);
 	matcher.knnMatch(descriptors1, descriptors2, matches, k, maskKnn, false);
 
-	std::vector<DepthScale> depthScales = Features2DUtility::GetInlierDepthScales(f1, keyPoints1);
+	std::vector<DepthScale> depthScales = Features2DUtility::CreateInlierDepthScales(f1, keyPoints1);
 
 	vector<bool> mask(matches.size(), true);
 	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);

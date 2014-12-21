@@ -11,7 +11,7 @@ class Features2DUtility
 {
 public:
 	static void Features2DUtility::VoteForUniqueness(std::vector<std::vector<cv::DMatch>>& matches, float threshold, std::vector<bool> &mask);
-	static std::vector<DepthScale> Features2DUtility::GetInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
+	static std::vector<DepthScale> Features2DUtility::CreateInlierDepthScales(BaseKinectModel kinectModel, std::vector<cv::KeyPoint> keyPoints)
 ;
 };
 #endif
