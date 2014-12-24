@@ -147,9 +147,9 @@ cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &ma
     translation = midTrainPointMat - midTestPointMat;
 
 	(*transformation)(3,0) = translation(0,0);
-	(*transformation)(3,0) = translation(1,0);
-	(*transformation)(3,0) = translation(2,0);
-	(*transformation)(3,0) = 1.0;
+	(*transformation)(3,1) = translation(1,0);
+	(*transformation)(3,2) = translation(2,0);
+	(*transformation)(3,3) = 1.0;
 #pragma endregion
 
 	return *transformation;
