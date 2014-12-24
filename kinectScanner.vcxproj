@@ -82,6 +82,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Models\Match3D.cpp" />
+    <ClCompile Include="Models\SCPoint3D.cpp" />
+    <ClCompile Include="Managers\SCScanFlowManager.cpp" />
     <ClCompile Include="Utilities\TransformationUtility.cpp" />
     <ClCompile Include="Utilities\DrawUtility.cpp" />
     <ClCompile Include="Utilities\Features2DUtility.cpp" />
@@ -97,6 +99,8 @@
   <ItemGroup>
     <ClInclude Include="Macros.h" />
     <ClInclude Include="Models\Match3D.h" />
+    <ClInclude Include="Models\SCPoint3D.h" />
+    <ClInclude Include="Managers\SCScanFlowManager.h" />
     <ClInclude Include="Utilities\TransformationUtility.h" />
     <ClInclude Include="Utilities\DrawUtility.h" />
     <ClInclude Include="Utilities\Features2DUtility.h" />

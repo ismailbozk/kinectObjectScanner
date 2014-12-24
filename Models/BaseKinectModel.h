@@ -1,8 +1,8 @@
-#include <opencv2/core/core.hpp>
-#include <vector>
-
 #ifndef BASEKINECTMODEL_H
 #define BASEKINECTMODEL_H
+
+#include <opencv2/core/core.hpp>
+#include <vector>
 
 class BaseKinectModel
 {

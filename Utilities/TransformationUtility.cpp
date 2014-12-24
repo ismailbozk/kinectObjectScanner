@@ -40,12 +40,11 @@ std::vector<Match3D> TransformationUtility::Create3DMatchPoints(std::vector<bool
 }
 
 
-cv::Mat4f TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
+cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
 {
-	cv::Mat4f *transformation = new cv::Mat4f();
-	cv::Vec3f translation();
+	cv::Matx44d *transformation = new cv::Matx44d();
 
-	#pragma region obtain mid points of matches and seperated consecutive matches
+#pragma region obtain mid points of matches and seperated consecutive matches
 	Point3d trainMidPoint = Point3d(0,0,0);		//d_ mid
 	Point3d testMidPoint = Point3d(0,0,0);		//m_ mid
 	for (int i = 0; i < matches3D.size(); i++)
@@ -61,7 +60,7 @@ cv::Mat4f TransformationUtility::CreateTransformation(std::vector<Match3D> &matc
 	testMidPoint.z = testMidPoint.z / matches3D.size();
 	#pragma endregion
 
-	#pragma region pull the all points to around origin midpoints traslated to the 0,0,0 point and finding the H matrix
+#pragma region pull the all points to around origin midpoints traslated to the 0,0,0 point and finding the H matrix
 	double HMatrix11 = 0.0;
     double HMatrix12 = 0.0;
     double HMatrix13 = 0.0;
@@ -91,20 +90,79 @@ cv::Mat4f TransformationUtility::CreateTransformation(std::vector<Match3D> &matc
 		HMatrix32 += matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair.z * matches3DWhichAreTranslatedAroundTheMidPoints[i].queryPair.y;
 		HMatrix33 += matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair.z * matches3DWhichAreTranslatedAroundTheMidPoints[i].queryPair.z;
 	}
-	cv::Mat src = cv::Mat(3, 3, CV_64F);
-	
-	src.at<double>(0,0) = HMatrix11; src.at<double>(0,1) = HMatrix12; src.at<double>(0,2) = HMatrix13;
-	src.at<double>(1,0) = HMatrix21; src.at<double>(1,1) = HMatrix22; src.at<double>(1,2) = HMatrix23;
-	src.at<double>(2,0) = HMatrix31; src.at<double>(2,1) = HMatrix32; src.at<double>(2,2) = HMatrix33;
 
-	cv::Mat w;
-	cv::Mat u;
-	cv::Mat vt;
+#pragma endregion
+
+#pragma region SVD
+	cv::Matx33d src = cv::Matx33d();
+
+	src(0,0) = HMatrix11; src(0,1) = HMatrix12; src(0,2) = HMatrix13;
+	src(1,0) = HMatrix21; src(1,1) = HMatrix22; src(1,2) = HMatrix23;
+	src(2,0) = HMatrix31; src(2,1) = HMatrix32; src(2,2) = HMatrix33;
+
+	cv::Matx31d w;
+	cv::Matx33d u;
+	cv::Matx33d vt;
 	cv::SVD::compute(src, w, u, vt, 0);
+#pragma endregion
 
+#pragma region Rotation Matrix
+	(*transformation)(0,0) = vt(0,0) * u(0,0) + vt(1,0) * u(0,1) + vt(2,0) * u(0,2);
+	(*transformation)(0,1) = vt(0,0) * u(1,0) + vt(1,0) * u(1,1) + vt(2,0) * u(1,2);
+	(*transformation)(0,2) = vt(0,0) * u(2,0) + vt(1,0) * u(2,1) + vt(2,0) * u(2,2);
+	(*transformation)(0,3) = 0.0;
+
+	(*transformation)(1,0) = vt(0,1) * u(0,0) + vt(1,1) * u(0,1) + vt(2,1) * u(0,2);
+	(*transformation)(1,1) = vt(0,1) * u(1,0) + vt(1,1) * u(1,1) + vt(2,1) * u(1,2);
+	(*transformation)(1,2) = vt(0,1) * u(2,0) + vt(1,1) * u(2,1) + vt(2,1) * u(2,2);
+	(*transformation)(1,3) = 0.0;
+
+	(*transformation)(2,0) = vt(0,2) * u(0,0) + vt(1,2) * u(0,1) + vt(2,2) * u(0,2);
+	(*transformation)(2,1) = vt(0,2) * u(1,0) + vt(1,2) * u(1,1) + vt(2,2) * u(1,2);
+	(*transformation)(2,2) = vt(0,2) * u(2,0) + vt(1,2) * u(2,1) + vt(2,2) * u(2,2);
+	(*transformation)(2,3) = 0.0;
+
+	(*transformation)(2,0) = 0.0;
+	(*transformation)(2,1) = 0.0;
+	(*transformation)(2,2) = 0.0;
+	(*transformation)(2,3) = 1.0;
+
+#pragma endregion
+
+#pragma region camera translation
+	cv::Matx41d translation;
+
+	cv::Matx41d midTestPointMat = cv::Matx41d();
+	midTestPointMat(0,0) = testMidPoint.x;	midTestPointMat(1,0) = testMidPoint.y;
+	midTestPointMat(2,0) = testMidPoint.z;	midTestPointMat(3,0) = 1.0;
 	
+	cv::Matx41d midTrainPointMat = cv::Matx41d();
+	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(1,0) = trainMidPoint.y;
+	midTrainPointMat(2,0) = trainMidPoint.z;	midTrainPointMat(3,0) = 1.0;
 
-	#pragma endregion
+	testMidPoint = TransformationUtility::TransformSinglePoint(testMidPoint, *transformation);
+
+	//cv::transform(midTestPointMat, midTestPointMat, *transformation);
+
+    translation = midTrainPointMat - midTestPointMat;
+
+	(*transformation)(3,0) = translation(0,0);
+	(*transformation)(3,0) = translation(1,0);
+	(*transformation)(3,0) = translation(2,0);
+	(*transformation)(3,0) = 1.0;
+#pragma endregion
 
 	return *transformation;
+}
+
+//std::vector<SCPoint3D> TransformationUtility::Transform(BaseKinectModel kinectModel, cv::Mat &transformationMatrix)
+//{
+//	cv::Point3d
+//}
+
+cv::Point3d TransformationUtility::TransformSinglePoint(cv::Point3d &pt, cv::Matx44d &transformationMatrix)
+{
+	cv::Matx41d point(pt.x, pt.y, pt.z, 1.0);
+	cv::Matx41d result = transformationMatrix * point;
+	return cv::Point3d(result(0,0), result(1,0), result(2.0));
 }

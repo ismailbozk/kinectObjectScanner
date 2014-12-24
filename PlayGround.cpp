@@ -1,5 +1,7 @@
 #include "PlayGround.h"
 
+#include <iostream>
+
 #include <opencv2/core/core.hpp>
 #include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/highgui/highgui.hpp>
@@ -66,7 +68,7 @@ void PlayGround::startToPlay()
 	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
 
 	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
-	cv::Mat4d transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
+	cv::Matx44d transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
 
 
 }

@@ -3,9 +3,11 @@
 
 class PlayGround
 {
-public:
+public:	
 	PlayGround(void);
 	void startToPlay();
+
+
 };
 
 #endif
