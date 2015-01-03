@@ -4,6 +4,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include <iostream>
+#include <fstream>
+#include <string>
+
 #include <stdexcept>
 
 using namespace std;
@@ -74,4 +77,41 @@ void DrawUtility::DrawMatches(std::vector<bool> mask, std::vector<std::vector<cv
 		cout << errorMessage << endl;
 		throw std::invalid_argument(errorMessage );
 	}
+}
+
+void DrawUtility::WritePLYFile(std::string fileName, std::vector<SCPoint3D> pointCloud)
+{
+	ofstream outputFile("test.ply"/*, ofstream::out*/);
+
+	if (outputFile.is_open())
+	{
+		outputFile << "ply" << endl << "format ascii 1.0" << endl << "element face 0" << endl;
+		outputFile << "property list uchar int vertex_indices" << endl;
+
+		outputFile << "element vertex " << pointCloud.size() << endl;
+		outputFile << "property float x" << endl 
+			<< "property float y" << endl
+			<< "property float z" << endl;
+		outputFile << "property uchar diffuse_blue" << endl
+			<< "property uchar diffuse_green" << endl
+			<< "property uchar diffuse_red" << endl;
+		outputFile << "end_header" << endl;
+
+		for (int i = 0; i < pointCloud.size(); i++)
+		{
+			cv::Point3d tempPt = pointCloud[i].pt;
+			double x = tempPt.x;
+			//cv::Vec3b 
+			std::string temp = std::to_string(pointCloud[i].pt.x) + " " 
+				+ std::to_string(pointCloud[i].pt.y) + " "
+				+ std::to_string(pointCloud[i].pt.z) + " "
+				+ std::to_string(pointCloud[i].color[2]) + " "	//r
+				+ std::to_string(pointCloud[i].color[1]) + " "	//g
+				+ std::to_string(pointCloud[i].color[0]);		//b
+
+			outputFile << temp << endl;
+		}	
+	}
+
+	outputFile.close();
 }

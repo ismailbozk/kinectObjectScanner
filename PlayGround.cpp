@@ -16,7 +16,7 @@
 #include "Models\BaseKinectModel.h"
 #include "Models\DepthScale.h"
 #include "Models\Match3D.h"
-
+#include "Models\SCPoint3D.h"
 
 
 using namespace cv;
@@ -68,7 +68,15 @@ void PlayGround::startToPlay()
 	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
 
 	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
-	cv::Matx44d transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
+	cv::Matx44d *transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
+	vector<SCPoint3D> *trainPC = TransformationUtility::Transform(kinectModelTrain, cv::Matx44d::eye());
+	vector<SCPoint3D> *testPC = TransformationUtility::Transform(kinectModelTest, (*transformationMatrix));
 
+	vector<SCPoint3D> *allPC = new vector<SCPoint3D>();
+	(*allPC).reserve((*trainPC).size() + (*testPC).size());
 
+	(*allPC).insert( (*allPC).end(), (*trainPC).begin(), (*trainPC).end());
+	(*allPC).insert( (*allPC).end(), (*testPC).begin(), (*testPC).end());
+
+	DrawUtility::WritePLYFile("C:\\test.ply", *allPC);
 }

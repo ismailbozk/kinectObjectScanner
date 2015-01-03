@@ -12,7 +12,7 @@ public:
 	~SCPoint3D(void);
 
 	cv::Point3d pt;
-	cv::Vec3b color;	//bgr order 0,1,2
+	cv::Vec3b color;	//bgr order [0],[1],[2]
 };
 
 #endif

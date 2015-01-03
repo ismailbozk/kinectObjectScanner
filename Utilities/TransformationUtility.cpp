@@ -1,6 +1,6 @@
 #include "TransformationUtility.h"
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/legacy/legacy.hpp>
 
 #include "../Macros.h"
 #include <iostream>
@@ -20,11 +20,10 @@ std::vector<Match3D> TransformationUtility::Create3DMatchPoints(std::vector<bool
 			KeyPoint trainPairKeyPoint = trainKeypoints[currentMatch.trainIdx];
 
 			int trainPairIndex = (int)(((trainKinectModel.grayImage.cols) * round(trainPairKeyPoint.pt.y)) + (int)trainPairKeyPoint.pt.x);
-
 			int testPairIndex = (int)(((testKinectModel.grayImage.cols) * round(testPairKeyPoint.pt.y)) + (int)testPairKeyPoint.pt.x);
 
-
-			if (trainKinectModel.pointCloud[trainPairIndex] == cv::Point3d() || testKinectModel.pointCloud[testPairIndex] == cv::Point3d())
+			if ((trainKinectModel.pointCloud[trainPairIndex].x == 0.0 && trainKinectModel.pointCloud[trainPairIndex].y == 0.0 && trainKinectModel.pointCloud[trainPairIndex].z == 0.0)
+				|| (testKinectModel.pointCloud[testPairIndex].x == 0.0 && testKinectModel.pointCloud[testPairIndex].y == 0.0 && testKinectModel.pointCloud[testPairIndex].z == 0.0))
 			{///elininate zero Point3d's
 				mask[i] = false;
 			}
@@ -40,7 +39,7 @@ std::vector<Match3D> TransformationUtility::Create3DMatchPoints(std::vector<bool
 }
 
 
-cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
+cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
 {
 	cv::Matx44d *transformation = new cv::Matx44d();
 
@@ -76,7 +75,7 @@ cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &ma
 	for (int i = 0; i <matches3DWhichAreTranslatedAroundTheMidPoints.size(); i++)
 	{
 		matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair -= trainMidPoint;		//d_i - d_ = d_c_i
-		matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair -= testMidPoint;		//m_i - m_ = m_c_i
+		matches3DWhichAreTranslatedAroundTheMidPoints[i].queryPair -= testMidPoint;		//m_i - m_ = m_c_i
 
 		HMatrix11 += matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair.x * matches3DWhichAreTranslatedAroundTheMidPoints[i].queryPair.x;
 		HMatrix12 += matches3DWhichAreTranslatedAroundTheMidPoints[i].trainPair.x * matches3DWhichAreTranslatedAroundTheMidPoints[i].queryPair.y;
@@ -122,10 +121,10 @@ cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &ma
 	(*transformation)(2,2) = vt(0,2) * u(2,0) + vt(1,2) * u(2,1) + vt(2,2) * u(2,2);
 	(*transformation)(2,3) = 0.0;
 
-	(*transformation)(2,0) = 0.0;
-	(*transformation)(2,1) = 0.0;
-	(*transformation)(2,2) = 0.0;
-	(*transformation)(2,3) = 1.0;
+	(*transformation)(3,0) = 0.0;
+	(*transformation)(3,1) = 0.0;
+	(*transformation)(3,2) = 0.0;
+	(*transformation)(3,3) = 1.0;
 
 #pragma endregion
 
@@ -152,13 +151,45 @@ cv::Matx44d TransformationUtility::CreateTransformation(std::vector<Match3D> &ma
 	(*transformation)(3,3) = 1.0;
 #pragma endregion
 
-	return *transformation;
+	return transformation;
 }
 
-//std::vector<SCPoint3D> TransformationUtility::Transform(BaseKinectModel kinectModel, cv::Mat &transformationMatrix)
-//{
-//	cv::Point3d
-//}
+std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testModel, cv::Matx44d &transformationMatrix)
+{
+	std::vector<SCPoint3D> *result = new std::vector<SCPoint3D>();
+	(*result).reserve(testModel.pointCloud.size());
+
+	cv::Mat grayImageWith3Channels;
+	if (testModel.image.cols == 0)
+	{//if no image found then use grayImage
+		cvtColor(testModel.grayImage, grayImageWith3Channels, CV_GRAY2RGB);
+	}
+
+	for (int i = 0; i < testModel.pointCloud.size(); i++)
+	{
+		if (testModel.pointCloud[i].z != 0.0 && testModel.pointCloud[i].y != 0.0 && testModel.pointCloud[i].x != 0.0)
+		{//if point is valid
+			if (testModel.image.cols > 0)
+			{//if color image exists
+				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
+					testModel.image.at<cv::Vec3b>(i / testModel.image.cols, i % testModel.image.cols)));
+			}
+			else if (testModel.grayImage.cols > 0)
+			{//if gray color image exists
+				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
+					grayImageWith3Channels.at<cv::Vec3b>(i / grayImageWith3Channels.cols, i % grayImageWith3Channels.cols)));
+			}
+			else
+			{// if no image fount than use white as color
+				cv::Vec3b white(255, 255, 255);
+				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
+					cv::Vec3b(255, 255, 255)));
+			}
+		}
+	}
+
+	return result;
+}
 
 cv::Point3d TransformationUtility::TransformSinglePoint(cv::Point3d &pt, cv::Matx44d &transformationMatrix)
 {
