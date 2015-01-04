@@ -12,3 +12,4 @@ kinectScanner.v11.suo
 x64/Debug/kinectScanner.exe
 *.ilk
 *.rej
+test.ply

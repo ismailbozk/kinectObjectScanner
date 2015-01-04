@@ -8,7 +8,7 @@
 using namespace std;
 using namespace cv;
 
-std::vector<Match3D> TransformationUtility::Create3DMatchPoints(std::vector<bool> &mask, std::vector<std::vector<cv::DMatch>> &matches, BaseKinectModel &trainKinectModel, std::vector<cv::KeyPoint> &trainKeypoints, BaseKinectModel &testKinectModel, std::vector<cv::KeyPoint> &testKeypoints)
+std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<bool> &mask, std::vector<std::vector<cv::DMatch>> &matches, BaseKinectModel &trainKinectModel, std::vector<cv::KeyPoint> &trainKeypoints, BaseKinectModel &testKinectModel, std::vector<cv::KeyPoint> &testKeypoints)
 {
 	vector<Match3D> *matches3D = new vector<Match3D>();
 	for (int i = 0; i < mask.size(); i++)
@@ -35,7 +35,7 @@ std::vector<Match3D> TransformationUtility::Create3DMatchPoints(std::vector<bool
 		}
 	}
 
-	return *matches3D;
+	return matches3D;
 }
 
 
@@ -154,6 +154,8 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	return transformation;
 }
 
+
+
 std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testModel, cv::Matx44d &transformationMatrix)
 {
 	std::vector<SCPoint3D> *result = new std::vector<SCPoint3D>();
@@ -191,9 +193,123 @@ std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testMo
 	return result;
 }
 
+std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matches3D, int numberOfIteration, double threshold)
+{//requeiress min 3 Match3D
+	std::vector<unsigned int> bestMatchesIndices;
+	int cBest = INT_MIN;
+
+	for (int iteration = 0; iteration < numberOfIteration; iteration++)
+	{
+		int c = 0;
+
+		std::vector<unsigned int> *random3 = TransformationUtility::Generate3UniqueRandom(matches3D.size());
+
+		(*random3)[0] = 30;
+		(*random3)[1] = 60;
+		(*random3)[2] = 90;
+
+		std::vector<Match3D> pickedMatches3D = std::vector<Match3D>();
+		pickedMatches3D.reserve(3);
+		pickedMatches3D.push_back(matches3D[(*random3)[0]]);
+		pickedMatches3D.push_back(matches3D[(*random3)[1]]);
+		pickedMatches3D.push_back(matches3D[(*random3)[2]]);
+
+		cv::Matx44d *candTransformation = TransformationUtility::CreateTransformation(pickedMatches3D);
+		std::vector<unsigned int> candMatchesIndices = std::vector<unsigned int>();
+		candMatchesIndices.reserve(matches3D.size());
+
+		double euclideanDistance;
+
+		for (unsigned int matchIndex = 0; matchIndex < matches3D.size(); matchIndex++)
+		{
+			if (matchIndex == 30 || matchIndex == 60 || matchIndex == 90)
+			{
+				bool bal = false;
+				bool del = true;
+			}
+
+			TransformationUtility::EuclideanDistanceBetweenTwoPoint(euclideanDistance,
+				matches3D[matchIndex].trainPair, 
+				TransformationUtility::TransformSinglePoint(matches3D[matchIndex].queryPair, *candTransformation));
+
+			if (euclideanDistance < threshold)
+			{
+				c++;
+				candMatchesIndices.push_back(matchIndex);
+			}
+		}
+
+		if (c > cBest && TransformationUtility::IsTransformationMatrixRightHanded(*candTransformation))
+		{
+			cBest = c;
+			bestMatchesIndices = candMatchesIndices;
+		}
+
+		//clear heap
+		delete candTransformation;
+		delete random3;
+	}
+
+	std::vector<Match3D> *result = new std::vector<Match3D>(bestMatchesIndices.size());
+
+	for (int i = 0; i < bestMatchesIndices.size(); i++)
+	{
+		(*result).push_back(matches3D[bestMatchesIndices[i]]);
+	}
+
+	return result;
+}
+
+
+#pragma region Helpers
+
 cv::Point3d TransformationUtility::TransformSinglePoint(cv::Point3d &pt, cv::Matx44d &transformationMatrix)
 {
 	cv::Matx41d point(pt.x, pt.y, pt.z, 1.0);
 	cv::Matx41d result = transformationMatrix * point;
 	return cv::Point3d(result(0,0), result(1,0), result(2.0));
 }
+
+std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil)
+{
+	std::vector<unsigned int> *uniqueNumbers = new std::vector<unsigned int>(3);
+
+	if (ceil >= 3)
+	{
+		(*uniqueNumbers)[0] = (std::rand() % ceil);
+
+		(*uniqueNumbers)[1] = (std::rand() % (ceil - 1));
+		if ((*uniqueNumbers)[0] == (*uniqueNumbers)[1])
+		{
+			(*uniqueNumbers)[1] += 1;
+		}
+
+		(*uniqueNumbers)[2] = (std::rand() % (ceil - 2));
+		if ((*uniqueNumbers)[2] == (*uniqueNumbers)[0])
+		{
+			(*uniqueNumbers)[2] += 1;
+		}
+		if ((*uniqueNumbers)[2] == (*uniqueNumbers)[1])
+		{
+			(*uniqueNumbers)[2] =+ 1;
+		}
+	}
+	return uniqueNumbers;
+}
+
+bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44d &transformation)
+{
+	double determinant = cv::determinant(transformation);
+	if (determinant > 0.0)
+	{
+		return true;
+	}
+	return false;
+}
+
+void TransformationUtility::EuclideanDistanceBetweenTwoPoint(double &euclideanDistance, cv::Point3d &pointA, cv::Point3d &pointB)
+{
+	euclideanDistance = cv::norm(pointA - pointB);
+}
+
+#pragma endregion

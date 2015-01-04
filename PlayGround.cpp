@@ -67,8 +67,11 @@ void PlayGround::startToPlay()
 
 	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
 
-	vector<Match3D> matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
-	cv::Matx44d *transformationMatrix = TransformationUtility::CreateTransformation(matches3D);
+	vector<Match3D> *matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
+
+	vector<Match3D> *inlierMatches3D = TransformationUtility::RANSAC(*matches3D, 1000, 0.2);
+
+	cv::Matx44d *transformationMatrix = TransformationUtility::CreateTransformation(*matches3D);
 	vector<SCPoint3D> *trainPC = TransformationUtility::Transform(kinectModelTrain, cv::Matx44d::eye());
 	vector<SCPoint3D> *testPC = TransformationUtility::Transform(kinectModelTest, (*transformationMatrix));
 
