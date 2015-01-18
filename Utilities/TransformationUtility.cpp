@@ -29,7 +29,7 @@ std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<boo
 			}
 			else
 			{
-				Match3D match3d = Match3D(trainKinectModel.pointCloud[trainPairIndex], testKinectModel.pointCloud[testPairIndex]);
+				Match3D match3d = Match3D(testKinectModel.pointCloud[testPairIndex], trainKinectModel.pointCloud[trainPairIndex]);
 				(*matches3D).push_back(match3d);
 			}
 		}
@@ -102,7 +102,7 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	cv::Matx31d w;
 	cv::Matx33d u;
 	cv::Matx33d vt;
-	cv::SVD::compute(src, w, u, vt, 0);
+	cv::SVD::compute(src, w, u, vt, cv::SVD::FULL_UV);
 #pragma endregion
 
 #pragma region Rotation Matrix
@@ -139,10 +139,7 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(1,0) = trainMidPoint.y;
 	midTrainPointMat(2,0) = trainMidPoint.z;	midTrainPointMat(3,0) = 1.0;
 
-	testMidPoint = TransformationUtility::TransformSinglePoint(testMidPoint, *transformation);
-
-	//cv::transform(midTestPointMat, midTestPointMat, *transformation);
-
+	TransformationUtility::TransformSinglePoint(midTestPointMat, -(*transformation));
     translation = midTrainPointMat - midTestPointMat;
 
 	(*transformation)(3,0) = translation(0,0);
@@ -268,6 +265,11 @@ cv::Point3d TransformationUtility::TransformSinglePoint(cv::Point3d &pt, cv::Mat
 	cv::Matx41d point(pt.x, pt.y, pt.z, 1.0);
 	cv::Matx41d result = transformationMatrix * point;
 	return cv::Point3d(result(0,0), result(1,0), result(2.0));
+}
+
+void TransformationUtility::TransformSinglePoint(cv::Matx41d &pt, cv::Matx44d &transformationMatrix)
+{
+	pt = transformationMatrix * pt;
 }
 
 std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil)
