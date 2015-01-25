@@ -129,22 +129,22 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 #pragma endregion
 
 #pragma region camera translation
-	cv::Matx41d translation;
+	cv::Matx14d translation;
 
-	cv::Matx41d midTestPointMat = cv::Matx41d();
-	midTestPointMat(0,0) = testMidPoint.x;	midTestPointMat(1,0) = testMidPoint.y;
-	midTestPointMat(2,0) = testMidPoint.z;	midTestPointMat(3,0) = 1.0;
+	cv::Matx14d midTestPointMat = cv::Matx14d();
+	midTestPointMat(0,0) = testMidPoint.x;	midTestPointMat(0,1) = testMidPoint.y;
+	midTestPointMat(0,2) = testMidPoint.z;	midTestPointMat(0,3) = 1.0;
 	
-	cv::Matx41d midTrainPointMat = cv::Matx41d();
-	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(1,0) = trainMidPoint.y;
-	midTrainPointMat(2,0) = trainMidPoint.z;	midTrainPointMat(3,0) = 1.0;
+	cv::Matx14d midTrainPointMat = cv::Matx14d();
+	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(0,1) = trainMidPoint.y;
+	midTrainPointMat(0,2) = trainMidPoint.z;	midTrainPointMat(0,3) = 1.0;
 
 	TransformationUtility::TransformSinglePoint(midTestPointMat, (*transformation));
     translation = midTrainPointMat - midTestPointMat;
 
 	(*transformation)(3,0) = translation(0,0);
-	(*transformation)(3,1) = translation(1,0);
-	(*transformation)(3,2) = translation(2,0);
+	(*transformation)(3,1) = translation(0,1);
+	(*transformation)(3,2) = translation(0,2);
 	(*transformation)(3,3) = 1.0;
 #pragma endregion
 
@@ -274,8 +274,12 @@ void TransformationUtility::TransformSinglePoint(cv::Matx41d &pt, cv::Matx44d &t
 {
 	Matx44d transformationT;
 	cv::transpose(transformationMatrix, transformationT);
+	pt = transformationT * pt;	
+}
 
-	pt = transformationT * pt;
+void TransformationUtility::TransformSinglePoint(cv::Matx14d &pt, cv::Matx44d &transformationMatrix)
+{
+	pt = pt * transformationMatrix;	
 }
 
 std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil)
