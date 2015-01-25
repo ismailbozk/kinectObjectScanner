@@ -269,14 +269,6 @@ void TransformationUtility::TransformSinglePoint(cv::Matx41d &pt, cv::Matx44d &t
 
 void TransformationUtility::TransformSinglePoint(cv::Matx14d &pt, cv::Matx44d &transformationMatrix)
 {
-		
-
-	Matx44d transformationT;
-	cv::transpose(transformationMatrix, transformationT);
-	Matx41d at = Matx41d(pt(0,0), pt(0,1), pt(0,2), pt(0,3));
-	at = transformationT * at;	
-
-
 	pt = pt * transformationMatrix;
 }
 
