@@ -201,10 +201,6 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 
 		std::vector<unsigned int> *random3 = TransformationUtility::Generate3UniqueRandom(matches3D.size());
 
-		(*random3)[0] = 30;
-		(*random3)[1] = 60;
-		(*random3)[2] = 90;
-
 		std::vector<Match3D> pickedMatches3D = std::vector<Match3D>();
 		pickedMatches3D.reserve(3);
 		pickedMatches3D.push_back(matches3D[(*random3)[0]]);
@@ -219,12 +215,6 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 
 		for (unsigned int matchIndex = 0; matchIndex < matches3D.size(); matchIndex++)
 		{
-			if (matchIndex == 30 || matchIndex == 60 || matchIndex == 90)
-			{
-				bool bal = false;
-				bool del = true;
-			}
-
 			TransformationUtility::EuclideanDistanceBetweenTwoPoint(euclideanDistance,
 				matches3D[matchIndex].trainPair, 
 				TransformationUtility::TransformSinglePoint(matches3D[matchIndex].queryPair, *candTransformation));
@@ -279,7 +269,15 @@ void TransformationUtility::TransformSinglePoint(cv::Matx41d &pt, cv::Matx44d &t
 
 void TransformationUtility::TransformSinglePoint(cv::Matx14d &pt, cv::Matx44d &transformationMatrix)
 {
-	pt = pt * transformationMatrix;	
+		
+
+	Matx44d transformationT;
+	cv::transpose(transformationMatrix, transformationT);
+	Matx41d at = Matx41d(pt(0,0), pt(0,1), pt(0,2), pt(0,3));
+	at = transformationT * at;	
+
+
+	pt = pt * transformationMatrix;
 }
 
 std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil)
