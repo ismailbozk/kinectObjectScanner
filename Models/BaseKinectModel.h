@@ -18,7 +18,7 @@ public:
 	cv::Mat image;								//color image					
 	cv::Mat grayImage;							//grayScale image
 	std::vector<short> calibratedDepth;			//depthData
-	std::vector<cv::Point3d> pointCloud;		//local pointcloud in 3D
+	std::vector<cv::Point3f> pointCloud;		//local pointcloud in 3D
 };
 
 #endif

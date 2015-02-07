@@ -24,7 +24,7 @@ std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<boo
 
 			if ((trainKinectModel.pointCloud[trainPairIndex].x == 0.0 && trainKinectModel.pointCloud[trainPairIndex].y == 0.0 && trainKinectModel.pointCloud[trainPairIndex].z == 0.0)
 				|| (testKinectModel.pointCloud[testPairIndex].x == 0.0 && testKinectModel.pointCloud[testPairIndex].y == 0.0 && testKinectModel.pointCloud[testPairIndex].z == 0.0))
-			{///elininate zero Point3d's
+			{///elininate zero Point3f's
 				mask[i] = false;
 			}
 			else
@@ -39,13 +39,13 @@ std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<boo
 }
 
 
-cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
+cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &matches3D)
 {
-	cv::Matx44d *transformation = new cv::Matx44d();
+	cv::Matx44f *transformation = new cv::Matx44f();
 
 #pragma region obtain mid points of matches and seperated consecutive matches
-	Point3d trainMidPoint = Point3d(0,0,0);		//d_ mid
-	Point3d testMidPoint = Point3d(0,0,0);		//m_ mid
+	Point3f trainMidPoint = Point3f(0,0,0);		//d_ mid
+	Point3f testMidPoint = Point3f(0,0,0);		//m_ mid
 	for (int i = 0; i < matches3D.size(); i++)
 	{
 		trainMidPoint += matches3D[i].trainPair;
@@ -60,15 +60,15 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	#pragma endregion
 
 #pragma region pull the all points to around origin midpoints traslated to the 0,0,0 point and finding the H matrix
-	double HMatrix11 = 0.0;
-    double HMatrix12 = 0.0;
-    double HMatrix13 = 0.0;
-    double HMatrix21 = 0.0;
-    double HMatrix22 = 0.0;
-    double HMatrix23 = 0.0;
-    double HMatrix31 = 0.0;
-    double HMatrix32 = 0.0;
-    double HMatrix33 = 0.0;	
+	float HMatrix11 = 0.0;
+    float HMatrix12 = 0.0;
+    float HMatrix13 = 0.0;
+    float HMatrix21 = 0.0;
+    float HMatrix22 = 0.0;
+    float HMatrix23 = 0.0;
+    float HMatrix31 = 0.0;
+    float HMatrix32 = 0.0;
+    float HMatrix33 = 0.0;	
 
 	vector<Match3D> matches3DWhichAreTranslatedAroundTheMidPoints = matches3D;
 
@@ -93,20 +93,20 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 #pragma endregion
 
 #pragma region SVD
-	cv::Matx33d src = cv::Matx33d();
+	cv::Matx33f src = cv::Matx33f();
 
 	src(0,0) = HMatrix11; src(0,1) = HMatrix12; src(0,2) = HMatrix13;
 	src(1,0) = HMatrix21; src(1,1) = HMatrix22; src(1,2) = HMatrix23;
 	src(2,0) = HMatrix31; src(2,1) = HMatrix32; src(2,2) = HMatrix33;
 
-	cv::Matx31d w;
-	cv::Matx33d u;
-	cv::Matx33d vt;
-	cv::SVD::compute(src, w, u, vt, cv::SVD::FULL_UV);
+	cv::Matx31f w;
+	cv::Matx33f u;
+	cv::Matx33f vt;
+	cv::SVD::compute(src, w, u, vt, 0);
 #pragma endregion
 
 #pragma region Rotation Matrix
-	(*transformation)(0,0) = vt(0,0) * u(0,0) + vt(1,0) * u(0,1) + vt(2,0) * u(0,2);
+	/*(*transformation)(0,0) = vt(0,0) * u(0,0) + vt(1,0) * u(0,1) + vt(2,0) * u(0,2);
 	(*transformation)(0,1) = vt(0,0) * u(1,0) + vt(1,0) * u(1,1) + vt(2,0) * u(1,2);
 	(*transformation)(0,2) = vt(0,0) * u(2,0) + vt(1,0) * u(2,1) + vt(2,0) * u(2,2);
 	(*transformation)(0,3) = 0.0;
@@ -119,6 +119,22 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	(*transformation)(2,0) = vt(0,2) * u(0,0) + vt(1,2) * u(0,1) + vt(2,2) * u(0,2);
 	(*transformation)(2,1) = vt(0,2) * u(1,0) + vt(1,2) * u(1,1) + vt(2,2) * u(1,2);
 	(*transformation)(2,2) = vt(0,2) * u(2,0) + vt(1,2) * u(2,1) + vt(2,2) * u(2,2);
+	(*transformation)(2,3) = 0.0;*/
+
+	Matx33f uMultipleVT = u*vt;
+	(*transformation)(0,0) = uMultipleVT(0,0);
+	(*transformation)(0,1) = uMultipleVT(0,1);
+	(*transformation)(0,2) = uMultipleVT(0,2);
+	(*transformation)(0,3) = 0.0;
+
+	(*transformation)(1,0) = uMultipleVT(1,0);
+	(*transformation)(1,1) = uMultipleVT(1,1);
+	(*transformation)(1,2) = uMultipleVT(1,2);
+	(*transformation)(1,3) = 0.0;
+
+	(*transformation)(2,0) = uMultipleVT(2,0);
+	(*transformation)(2,1) = uMultipleVT(2,1);
+	(*transformation)(2,2) = uMultipleVT(2,2);
 	(*transformation)(2,3) = 0.0;
 
 	(*transformation)(3,0) = 0.0;
@@ -129,13 +145,13 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 #pragma endregion
 
 #pragma region camera translation
-	cv::Matx14d translation;
+	cv::Matx14f translation;
 
-	cv::Matx14d midTestPointMat = cv::Matx14d();
+	cv::Matx14f midTestPointMat = cv::Matx14f();
 	midTestPointMat(0,0) = testMidPoint.x;	midTestPointMat(0,1) = testMidPoint.y;
 	midTestPointMat(0,2) = testMidPoint.z;	midTestPointMat(0,3) = 1.0;
 	
-	cv::Matx14d midTrainPointMat = cv::Matx14d();
+	cv::Matx14f midTrainPointMat = cv::Matx14f();
 	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(0,1) = trainMidPoint.y;
 	midTrainPointMat(0,2) = trainMidPoint.z;	midTrainPointMat(0,3) = 1.0;
 
@@ -153,7 +169,7 @@ cv::Matx44d *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 
 
 
-std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testModel, cv::Matx44d &transformationMatrix)
+std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testModel, cv::Matx44f &transformationMatrix)
 {
 	std::vector<SCPoint3D> *result = new std::vector<SCPoint3D>();
 	(*result).reserve(testModel.pointCloud.size());
@@ -190,7 +206,7 @@ std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testMo
 	return result;
 }
 
-std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matches3D, int numberOfIteration, double threshold)
+std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matches3D, int numberOfIteration, float threshold)
 {//requeiress min 3 Match3D
 	std::vector<unsigned int> bestMatchesIndices;
 	int cBest = INT_MIN;
@@ -207,11 +223,11 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 		pickedMatches3D.push_back(matches3D[(*random3)[1]]);
 		pickedMatches3D.push_back(matches3D[(*random3)[2]]);
 
-		cv::Matx44d *candTransformation = TransformationUtility::CreateTransformation(pickedMatches3D);
+		cv::Matx44f *candTransformation = TransformationUtility::CreateTransformation(pickedMatches3D);
 		std::vector<unsigned int> candMatchesIndices = std::vector<unsigned int>();
 		candMatchesIndices.reserve(matches3D.size());
 
-		double euclideanDistance;
+		float euclideanDistance;
 
 		for (unsigned int matchIndex = 0; matchIndex < matches3D.size(); matchIndex++)
 		{
@@ -250,24 +266,24 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 
 #pragma region Helpers
 
-cv::Point3d TransformationUtility::TransformSinglePoint(cv::Point3d &pt, cv::Matx44d &transformationMatrix)
+cv::Point3f TransformationUtility::TransformSinglePoint(cv::Point3f &pt, cv::Matx44f &transformationMatrix)
 {
-	Matx44d transformationT;
+	Matx44f transformationT;
 	cv::transpose(transformationMatrix, transformationT);
 
-	cv::Matx41d point(pt.x, pt.y, pt.z, 1.0);
-	cv::Matx41d result = transformationT * point;
-	return cv::Point3d(result(0,0), result(1,0), result(2.0));
+	cv::Matx41f point(pt.x, pt.y, pt.z, 1.0);
+	cv::Matx41f result = transformationT * point;
+	return cv::Point3f(result(0,0), result(1,0), result(2.0));
 }
 
-void TransformationUtility::TransformSinglePoint(cv::Matx41d &pt, cv::Matx44d &transformationMatrix)
+void TransformationUtility::TransformSinglePoint(cv::Matx41f &pt, cv::Matx44f &transformationMatrix)
 {
-	Matx44d transformationT;
+	Matx44f transformationT;
 	cv::transpose(transformationMatrix, transformationT);
 	pt = transformationT * pt;	
 }
 
-void TransformationUtility::TransformSinglePoint(cv::Matx14d &pt, cv::Matx44d &transformationMatrix)
+void TransformationUtility::TransformSinglePoint(cv::Matx14f &pt, cv::Matx44f &transformationMatrix)
 {
 	pt = pt * transformationMatrix;
 }
@@ -299,9 +315,9 @@ std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned
 	return uniqueNumbers;
 }
 
-bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44d &transformation)
+bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44f &transformation)
 {
-	double determinant = cv::determinant(transformation);
+	float determinant = cv::determinant(transformation);
 	if (determinant > 0.0)
 	{
 		return true;
@@ -309,7 +325,7 @@ bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44d &trans
 	return false;
 }
 
-void TransformationUtility::EuclideanDistanceBetweenTwoPoint(double &euclideanDistance, cv::Point3d &pointA, cv::Point3d &pointB)
+void TransformationUtility::EuclideanDistanceBetweenTwoPoint(float &euclideanDistance, cv::Point3f &pointA, cv::Point3f &pointB)
 {
 	euclideanDistance = cv::norm(pointA - pointB);
 }

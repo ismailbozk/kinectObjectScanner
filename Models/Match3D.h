@@ -10,10 +10,10 @@ public:
 	Match3D(void);
 	~Match3D(void);
 
-	Match3D::Match3D(cv::Point3d queryPair, cv::Point3d trainPair);
+	Match3D::Match3D(cv::Point3f queryPair, cv::Point3f trainPair);
 
-	cv::Point3d queryPair;
-	cv::Point3d trainPair;
+	cv::Point3f queryPair;
+	cv::Point3f trainPair;
 };
 
 #endif
