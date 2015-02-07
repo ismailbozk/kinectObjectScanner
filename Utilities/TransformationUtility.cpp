@@ -5,8 +5,12 @@
 #include "../Macros.h"
 #include <iostream>
 
+#include <../eigen/Eigen/Dense>
+#include <../eigen/Eigen/SVD>
+
 using namespace std;
 using namespace cv;
+using namespace Eigen;
 
 std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<bool> &mask, std::vector<std::vector<cv::DMatch>> &matches, BaseKinectModel &trainKinectModel, std::vector<cv::KeyPoint> &trainKeypoints, BaseKinectModel &testKinectModel, std::vector<cv::KeyPoint> &testKeypoints)
 {
@@ -103,6 +107,19 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	cv::Matx33f u;
 	cv::Matx33f vt;
 	cv::SVD::compute(src, w, u, vt, 0);
+
+
+	Matrix3f eigenSrc = Eigen::Matrix3f::Identity();
+	eigenSrc <<	HMatrix11, HMatrix21, HMatrix31,
+				HMatrix12, HMatrix22, HMatrix32,
+				HMatrix13, HMatrix23, HMatrix33;
+
+	Eigen::JacobiSVD<MatrixXf> svd(eigenSrc, ComputeFullU | ComputeFullV);
+	Eigen::Matrix3f eigenV = svd.matrixV();
+	Eigen::Matrix3f eigenU = svd.matrixU();
+
+	
+
 #pragma endregion
 
 #pragma region Rotation Matrix
@@ -122,7 +139,7 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	(*transformation)(2,3) = 0.0;*/
 
 	Matx33f uMultipleVT = u*vt;
-	(*transformation)(0,0) = uMultipleVT(0,0);
+	/*(*transformation)(0,0) = uMultipleVT(0,0);
 	(*transformation)(0,1) = uMultipleVT(0,1);
 	(*transformation)(0,2) = uMultipleVT(0,2);
 	(*transformation)(0,3) = 0.0;
@@ -135,6 +152,22 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	(*transformation)(2,0) = uMultipleVT(2,0);
 	(*transformation)(2,1) = uMultipleVT(2,1);
 	(*transformation)(2,2) = uMultipleVT(2,2);
+	(*transformation)(2,3) = 0.0;*/
+
+	Eigen::Matrix3f eigenUMultipleVT = eigenU * eigenV.transpose();
+	(*transformation)(0,0) = eigenUMultipleVT(0,0);
+	(*transformation)(0,1) = eigenUMultipleVT(0,1);
+	(*transformation)(0,2) = eigenUMultipleVT(0,2);
+	(*transformation)(0,3) = 0.0;
+
+	(*transformation)(1,0) = eigenUMultipleVT(1,0);
+	(*transformation)(1,1) = eigenUMultipleVT(1,1);
+	(*transformation)(1,2) = eigenUMultipleVT(1,2);
+	(*transformation)(1,3) = 0.0;
+
+	(*transformation)(2,0) = eigenUMultipleVT(2,0);
+	(*transformation)(2,1) = eigenUMultipleVT(2,1);
+	(*transformation)(2,2) = eigenUMultipleVT(2,2);
 	(*transformation)(2,3) = 0.0;
 
 	(*transformation)(3,0) = 0.0;

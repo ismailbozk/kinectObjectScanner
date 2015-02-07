@@ -298,5 +298,7 @@
     <None Include="Debug\TestData\poster1RGBA.csv" />
     <None Include="Debug\TestData\poster2Depth.csv" />
     <None Include="Debug\TestData\poster2RGBA.csv" />
+    <None Include="eigen\Eigen\Dense" />
+    <None Include="eigen\Eigen\SVD" />
   </ItemGroup>
 </Project>

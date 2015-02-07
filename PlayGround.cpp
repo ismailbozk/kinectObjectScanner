@@ -84,7 +84,7 @@ void PlayGround::startToPlay()
 	Point3f trD = Point3f(-1,1,1);
 	Point3f teD = Point3f(-1,-1,1);
 	(*matches3DTest).push_back(Match3D(teD, trD));
-	vector<Match3D> *inlierMatches = TransformationUtility::RANSAC(*matches3DTest, 3, 0.25);
+	//vector<Match3D> *inlierMatches = TransformationUtility::RANSAC(*matches3DTest, 3, 0.25);
 	cv::Matx44f *transformationMatrixTest = TransformationUtility::CreateTransformation(*matches3DTest);
 
 	//////////////////////////////////////
