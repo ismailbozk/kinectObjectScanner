@@ -25,13 +25,14 @@ using namespace std;
 static short surfHessianThreshold = 300;
 static float uniquenessThreshold = 0.8f;
 static short k = 2;
+static float ransacThreshold = 0.2f;
 
 PlayGround::PlayGround(void)
 {}
 
 void PlayGround::startToPlay()
 {
-	std::string filePrefix1 = "father2", filePrefix2 = "father1";
+	std::string filePrefix1 = "father4", filePrefix2 = "father3";
 
 	BaseKinectModel kinectModelTrain = SerializationUtility::getKinectDataWithFilePrefix(filePrefix1);
 	BaseKinectModel kinectModelTest = SerializationUtility::getKinectDataWithFilePrefix(filePrefix2);
@@ -65,7 +66,7 @@ void PlayGround::startToPlay()
 	
 	Features2DUtility::VoteForUniqueness(matches, 0.8f, mask);
 
-	DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
+	//DrawUtility::DrawMatches(mask, matches, kinectModelTest.grayImage, keyPointsTest, kinectModelTrain.grayImage, keyPointsTrain);
 
 	vector<Match3D> *matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
 	
@@ -89,7 +90,7 @@ void PlayGround::startToPlay()
 
 	//////////////////////////////////////
 
-	vector<Match3D> *inlierMatches3D = TransformationUtility::RANSAC(*matches3D, 100000, 0.25f);
+	vector<Match3D> *inlierMatches3D = TransformationUtility::RANSAC(*matches3D, 10000, ransacThreshold);
 
 	cv::Matx44f *transformationMatrix = TransformationUtility::CreateTransformation(*inlierMatches3D);
 	vector<SCPoint3D> *trainPC = TransformationUtility::Transform(kinectModelTrain, cv::Matx44f::eye());
