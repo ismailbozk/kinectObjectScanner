@@ -64,15 +64,15 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	#pragma endregion
 
 #pragma region pull the all points to around origin midpoints traslated to the 0,0,0 point and finding the H matrix
-	float HMatrix11 = 0.0;
-    float HMatrix12 = 0.0;
-    float HMatrix13 = 0.0;
-    float HMatrix21 = 0.0;
-    float HMatrix22 = 0.0;
-    float HMatrix23 = 0.0;
-    float HMatrix31 = 0.0;
-    float HMatrix32 = 0.0;
-    float HMatrix33 = 0.0;	
+	double HMatrix11 = 0.0;
+    double HMatrix12 = 0.0;
+    double HMatrix13 = 0.0;
+    double HMatrix21 = 0.0;
+    double HMatrix22 = 0.0;
+    double HMatrix23 = 0.0;
+    double HMatrix31 = 0.0;
+    double HMatrix32 = 0.0;
+    double HMatrix33 = 0.0;	
 
 	vector<Match3D> matches3DWhichAreTranslatedAroundTheMidPoints = matches3D;
 
@@ -97,7 +97,7 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 #pragma endregion
 
 #pragma region SVD
-	cv::Matx33f src = cv::Matx33f();
+	/*cv::Matx33f src = cv::Matx33f();
 
 	src(0,0) = HMatrix11; src(0,1) = HMatrix12; src(0,2) = HMatrix13;
 	src(1,0) = HMatrix21; src(1,1) = HMatrix22; src(1,2) = HMatrix23;
@@ -106,55 +106,21 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	cv::Matx31f w;
 	cv::Matx33f u;
 	cv::Matx33f vt;
-	cv::SVD::compute(src, w, u, vt, 0);
+	cv::SVD::compute(src, w, u, vt, 0);*/
 
 
-	Matrix3f eigenSrc = Eigen::Matrix3f::Identity();
+	Matrix3d eigenSrc = Eigen::Matrix3d::Identity();
 	eigenSrc <<	HMatrix11, HMatrix21, HMatrix31,
 				HMatrix12, HMatrix22, HMatrix32,
 				HMatrix13, HMatrix23, HMatrix33;
 
-	Eigen::JacobiSVD<MatrixXf> svd(eigenSrc, ComputeFullU | ComputeFullV);
-	Eigen::Matrix3f eigenV = svd.matrixV();
-	Eigen::Matrix3f eigenU = svd.matrixU();
-
-	
-
+	Eigen::JacobiSVD<MatrixXd> svd(eigenSrc, ComputeFullU | ComputeFullV);
+	Eigen::Matrix3d eigenV = svd.matrixV();
+	Eigen::Matrix3d eigenU = svd.matrixU();
 #pragma endregion
 
 #pragma region Rotation Matrix
-	/*(*transformation)(0,0) = vt(0,0) * u(0,0) + vt(1,0) * u(0,1) + vt(2,0) * u(0,2);
-	(*transformation)(0,1) = vt(0,0) * u(1,0) + vt(1,0) * u(1,1) + vt(2,0) * u(1,2);
-	(*transformation)(0,2) = vt(0,0) * u(2,0) + vt(1,0) * u(2,1) + vt(2,0) * u(2,2);
-	(*transformation)(0,3) = 0.0;
-
-	(*transformation)(1,0) = vt(0,1) * u(0,0) + vt(1,1) * u(0,1) + vt(2,1) * u(0,2);
-	(*transformation)(1,1) = vt(0,1) * u(1,0) + vt(1,1) * u(1,1) + vt(2,1) * u(1,2);
-	(*transformation)(1,2) = vt(0,1) * u(2,0) + vt(1,1) * u(2,1) + vt(2,1) * u(2,2);
-	(*transformation)(1,3) = 0.0;
-
-	(*transformation)(2,0) = vt(0,2) * u(0,0) + vt(1,2) * u(0,1) + vt(2,2) * u(0,2);
-	(*transformation)(2,1) = vt(0,2) * u(1,0) + vt(1,2) * u(1,1) + vt(2,2) * u(1,2);
-	(*transformation)(2,2) = vt(0,2) * u(2,0) + vt(1,2) * u(2,1) + vt(2,2) * u(2,2);
-	(*transformation)(2,3) = 0.0;*/
-
-	Matx33f uMultipleVT = u*vt;
-	/*(*transformation)(0,0) = uMultipleVT(0,0);
-	(*transformation)(0,1) = uMultipleVT(0,1);
-	(*transformation)(0,2) = uMultipleVT(0,2);
-	(*transformation)(0,3) = 0.0;
-
-	(*transformation)(1,0) = uMultipleVT(1,0);
-	(*transformation)(1,1) = uMultipleVT(1,1);
-	(*transformation)(1,2) = uMultipleVT(1,2);
-	(*transformation)(1,3) = 0.0;
-
-	(*transformation)(2,0) = uMultipleVT(2,0);
-	(*transformation)(2,1) = uMultipleVT(2,1);
-	(*transformation)(2,2) = uMultipleVT(2,2);
-	(*transformation)(2,3) = 0.0;*/
-
-	Eigen::Matrix3f eigenUMultipleVT = eigenU * eigenV.transpose();
+	Eigen::Matrix3d eigenUMultipleVT = eigenU * eigenV.transpose();
 	(*transformation)(0,0) = eigenUMultipleVT(0,0);
 	(*transformation)(0,1) = eigenUMultipleVT(0,1);
 	(*transformation)(0,2) = eigenUMultipleVT(0,2);
