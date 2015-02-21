@@ -81,6 +81,8 @@ void DrawUtility::DrawMatches(std::vector<bool> mask, std::vector<std::vector<cv
 
 void DrawUtility::WritePLYFile(std::string fileName, std::vector<SCPoint3D> pointCloud)
 {
+	cout << ".ply file \""<< fileName <<"\" is being prepared..." << endl;
+
 	ofstream outputFile("test.ply"/*, ofstream::out*/);
 
 	if (outputFile.is_open())
@@ -99,12 +101,11 @@ void DrawUtility::WritePLYFile(std::string fileName, std::vector<SCPoint3D> poin
 
 		for (int i = 0; i < pointCloud.size(); i++)
 		{
-			cv::Point3d tempPt = pointCloud[i].pt;
-			double x = tempPt.x;
-			//cv::Vec3b 
-			std::string temp = std::to_string(pointCloud[i].pt.x) + " " 
-				+ std::to_string(pointCloud[i].pt.y) + " "
-				+ std::to_string(pointCloud[i].pt.z) + " "
+			cv::Matx14f tempPt = pointCloud[i].pt;
+			
+			std::string temp = std::to_string(tempPt(0,0)) + " " 
+				+ std::to_string(tempPt(0,1)) + " "
+				+ std::to_string(tempPt(0,2)) + " "
 				+ std::to_string(pointCloud[i].color[2]) + " "	//r
 				+ std::to_string(pointCloud[i].color[1]) + " "	//g
 				+ std::to_string(pointCloud[i].color[0]);		//b
@@ -113,5 +114,6 @@ void DrawUtility::WritePLYFile(std::string fileName, std::vector<SCPoint3D> poin
 		}	
 	}
 
+	cout << ".ply file \""<< fileName <<"\" is written" << endl;
 	outputFile.close();
 }

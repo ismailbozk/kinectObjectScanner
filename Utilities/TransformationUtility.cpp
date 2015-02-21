@@ -28,7 +28,7 @@ std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<boo
 
 			if ((trainKinectModel.pointCloud[trainPairIndex].x == 0.0 && trainKinectModel.pointCloud[trainPairIndex].y == 0.0 && trainKinectModel.pointCloud[trainPairIndex].z == 0.0)
 				|| (testKinectModel.pointCloud[testPairIndex].x == 0.0 && testKinectModel.pointCloud[testPairIndex].y == 0.0 && testKinectModel.pointCloud[testPairIndex].z == 0.0))
-			{///elininate zero Point3f's
+			{///eliminate zero Point3f's
 				mask[i] = false;
 			}
 			else
@@ -121,6 +121,7 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 
 #pragma region Rotation Matrix
 	Eigen::Matrix3d eigenUMultipleVT = eigenU * eigenV.transpose();
+
 	(*transformation)(0,0) = eigenUMultipleVT(0,0);
 	(*transformation)(0,1) = eigenUMultipleVT(0,1);
 	(*transformation)(0,2) = eigenUMultipleVT(0,2);
@@ -154,7 +155,7 @@ cv::Matx44f *TransformationUtility::CreateTransformation(std::vector<Match3D> &m
 	midTrainPointMat(0,0) = trainMidPoint.x;	midTrainPointMat(0,1) = trainMidPoint.y;
 	midTrainPointMat(0,2) = trainMidPoint.z;	midTrainPointMat(0,3) = 1.0;
 
-	TransformationUtility::TransformSinglePoint(midTestPointMat, (*transformation));
+	TransformationUtility::TransformSingleMatrix(midTestPointMat, (*transformation));
     translation = midTrainPointMat - midTestPointMat;
 
 	(*transformation)(3,0) = translation(0,0);
@@ -183,21 +184,23 @@ std::vector<SCPoint3D> *TransformationUtility::Transform(BaseKinectModel &testMo
 	{
 		if (testModel.pointCloud[i].z != 0.0 && testModel.pointCloud[i].y != 0.0 && testModel.pointCloud[i].x != 0.0)
 		{//if point is valid
+			Point3f pt = testModel.pointCloud[i];
+			Matx14f ptMatrix = TransformationUtility::TransformSinglePoint2Matrix(pt, transformationMatrix);
+
 			if (testModel.image.cols > 0)
 			{//if color image exists
-				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
+				(*result).push_back(SCPoint3D(ptMatrix,
 					testModel.image.at<cv::Vec3b>(i / testModel.image.cols, i % testModel.image.cols)));
 			}
 			else if (testModel.grayImage.cols > 0)
 			{//if gray color image exists
-				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
+				(*result).push_back(SCPoint3D(ptMatrix,
 					grayImageWith3Channels.at<cv::Vec3b>(i / grayImageWith3Channels.cols, i % grayImageWith3Channels.cols)));
 			}
 			else
-			{// if no image fount than use white as color
+			{//if no image found, then use white as color
 				cv::Vec3b white(255, 255, 255);
-				(*result).push_back(SCPoint3D(TransformationUtility::TransformSinglePoint(testModel.pointCloud[i], transformationMatrix),
-					cv::Vec3b(255, 255, 255)));
+				(*result).push_back(SCPoint3D(ptMatrix,	cv::Vec3b(255, 255, 255)));
 			}
 		}
 	}
@@ -232,7 +235,7 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 		{
 			TransformationUtility::EuclideanDistanceBetweenTwoPoint(euclideanDistance,
 				matches3D[matchIndex].trainPair, 
-				TransformationUtility::TransformSinglePoint(matches3D[matchIndex].queryPair, *candTransformation));
+				TransformationUtility::TransformSinglePoint2Point(matches3D[matchIndex].queryPair, *candTransformation));
 
 			if (euclideanDistance < threshold)
 			{
@@ -252,7 +255,8 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 		delete random3;
 	}
 
-	std::vector<Match3D> *result = new std::vector<Match3D>(bestMatchesIndices.size());
+	std::vector<Match3D> *result = new std::vector<Match3D>();
+	(*result).reserve(bestMatchesIndices.size());
 
 	for (int i = 0; i < bestMatchesIndices.size(); i++)
 	{
@@ -264,25 +268,28 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 
 
 #pragma region Helpers
+//void TransformationUtility::TransformSinglePoint(cv::Matx41f &pt, cv::Matx44f &transformationMatrix)
+//{
+//	Matx44f transformationT;
+//	cv::transpose(transformationMatrix, transformationT);
+//	pt = transformationT * pt;	
+//}
 
-cv::Point3f TransformationUtility::TransformSinglePoint(cv::Point3f &pt, cv::Matx44f &transformationMatrix)
+cv::Matx14f TransformationUtility::TransformSinglePoint2Matrix(cv::Point3f &point, cv::Matx44f &transformationMatrix)
 {
-	Matx44f transformationT;
-	cv::transpose(transformationMatrix, transformationT);
-
-	cv::Matx41f point(pt.x, pt.y, pt.z, 1.0);
-	cv::Matx41f result = transformationT * point;
-	return cv::Point3f(result(0,0), result(1,0), result(2.0));
+	Matx14f pt(point.x, point.y, point.z, 1.0f);
+	TransformationUtility::TransformSingleMatrix(pt, transformationMatrix);
+	return pt;
 }
 
-void TransformationUtility::TransformSinglePoint(cv::Matx41f &pt, cv::Matx44f &transformationMatrix)
+cv::Point3f TransformationUtility::TransformSinglePoint2Point(cv::Point3f &point, cv::Matx44f &transformationMatrix)
 {
-	Matx44f transformationT;
-	cv::transpose(transformationMatrix, transformationT);
-	pt = transformationT * pt;	
+	Matx14f pt(point.x, point.y, point.z, 1.0f);
+	TransformationUtility::TransformSingleMatrix(pt, transformationMatrix);
+	return Point3f(pt(0,0), pt(0,1), pt(0,2));
 }
 
-void TransformationUtility::TransformSinglePoint(cv::Matx14f &pt, cv::Matx44f &transformationMatrix)
+void TransformationUtility::TransformSingleMatrix(cv::Matx14f &pt, cv::Matx44f &transformationMatrix)
 {
 	pt = pt * transformationMatrix;
 }

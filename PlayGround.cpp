@@ -70,7 +70,7 @@ void PlayGround::startToPlay()
 	vector<Match3D> *matches3D = TransformationUtility::Create3DMatchPoints(mask, matches, kinectModelTrain, keyPointsTrain, kinectModelTest, keyPointsTest);
 	
 	///test
-	vector<Match3D> *matches3DTest = new vector<Match3D>();
+	/*vector<Match3D> *matches3DTest = new vector<Match3D>();
 	
 	Point3f trA = Point3f(0,-1,1);
 	Point3f teA = Point3f(1,0,1);
@@ -84,14 +84,14 @@ void PlayGround::startToPlay()
 	Point3f trD = Point3f(-1,1,1);
 	Point3f teD = Point3f(-1,-1,1);
 	(*matches3DTest).push_back(Match3D(teD, trD));
-	//vector<Match3D> *inlierMatches = TransformationUtility::RANSAC(*matches3DTest, 3, 0.25);
-	cv::Matx44f *transformationMatrixTest = TransformationUtility::CreateTransformation(*matches3DTest);
+	vector<Match3D> *inlierMatches = TransformationUtility::RANSAC(*matches3DTest, 3, 0.2);
+	cv::Matx44f *transformationMatrixTest = TransformationUtility::CreateTransformation(*inlierMatches);*/
 
 	//////////////////////////////////////
 
-	vector<Match3D> *inlierMatches3D = TransformationUtility::RANSAC(*matches3D, 1000, 0.2f);
+	vector<Match3D> *inlierMatches3D = TransformationUtility::RANSAC(*matches3D, 100000, 0.25f);
 
-	cv::Matx44f *transformationMatrix = TransformationUtility::CreateTransformation(*matches3D);
+	cv::Matx44f *transformationMatrix = TransformationUtility::CreateTransformation(*inlierMatches3D);
 	vector<SCPoint3D> *trainPC = TransformationUtility::Transform(kinectModelTrain, cv::Matx44f::eye());
 	vector<SCPoint3D> *testPC = TransformationUtility::Transform(kinectModelTest, (*transformationMatrix));
 

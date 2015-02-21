@@ -20,9 +20,9 @@ public:
 
 	static std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matches3D, int numberOfIteration, float threshold);
 
-	static cv::Point3f TransformationUtility::TransformSinglePoint(cv::Point3f &pt, cv::Matx44f &transformationMatrix);
-	static void TransformationUtility::TransformSinglePoint(cv::Matx41f &pt, cv::Matx44f &transformationMatrix);
-	static void TransformationUtility::TransformSinglePoint(cv::Matx14f &pt, cv::Matx44f &transformationMatrix);
+	static cv::Matx14f TransformationUtility::TransformSinglePoint2Matrix(cv::Point3f &point, cv::Matx44f &transformationMatrix);
+	static cv::Point3f TransformationUtility::TransformSinglePoint2Point(cv::Point3f &point, cv::Matx44f &transformationMatrix);
+	static void TransformationUtility::TransformSingleMatrix(cv::Matx14f &pt, cv::Matx44f &transformationMatrix);
 
 private:
 	static std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil);
