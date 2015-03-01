@@ -229,7 +229,7 @@ std::vector<Match3D> *TransformationUtility::RANSAC(std::vector<Match3D> &matche
 		std::vector<unsigned int> candMatchesIndices = std::vector<unsigned int>();
 		candMatchesIndices.reserve(matches3D.size());
 
-		float euclideanDistance;
+		double euclideanDistance;
 
 		for (unsigned int matchIndex = 0; matchIndex < matches3D.size(); matchIndex++)
 		{
@@ -323,7 +323,7 @@ std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned
 
 bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44f &transformation)
 {
-	float determinant = cv::determinant(transformation);
+	double determinant = cv::determinant(transformation);
 	if (determinant > 0.0)
 	{
 		return true;
@@ -331,7 +331,7 @@ bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44f &trans
 	return false;
 }
 
-void TransformationUtility::EuclideanDistanceBetweenTwoPoint(float &euclideanDistance, cv::Point3f &pointA, cv::Point3f &pointB)
+void TransformationUtility::EuclideanDistanceBetweenTwoPoint(double &euclideanDistance, cv::Point3f &pointA, cv::Point3f &pointB)
 {
 	euclideanDistance = cv::norm(pointA - pointB);
 }

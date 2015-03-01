@@ -27,7 +27,7 @@ public:
 private:
 	static std::vector<unsigned int> *TransformationUtility::Generate3UniqueRandom(unsigned int ceil);
 	static bool TransformationUtility::IsTransformationMatrixRightHanded(cv::Matx44f &transformation);
-	static void TransformationUtility::EuclideanDistanceBetweenTwoPoint(float &euclideanDistance, cv::Point3f &pointA, cv::Point3f &pointB);
+	static void TransformationUtility::EuclideanDistanceBetweenTwoPoint(double &euclideanDistance, cv::Point3f &pointA, cv::Point3f &pointB);
 };
 
 #endif
