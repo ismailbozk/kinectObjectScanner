@@ -115,7 +115,54 @@ void PlayGround::startToPlay()
 	cout << "Step 4: Consecutive frame 3D point clouds were prepared." << endl;
 
 	//DrawUtility::WritePLYFile("C:\\test.ply", *allPC);
-
+	
 	//-- Step 5: Surface Reconstruction
+	PointCloud<PointXYZ>::Ptr cloud (new PointCloud<PointXYZ>());
+	for (int i = 0; i < (*allPC).size(); i++)
+	{
+		PointXYZ pt;
+		pt.x = (*allPC)[i].pt(0,0);
+		pt.y = (*allPC)[i].pt(0,0);
+		pt.z = (*allPC)[i].pt(0,0);
+		//pt.r = (*allPC)[i].color[2];
+		//pt.g = (*allPC)[i].color[1];
+		//pt.b = (*allPC)[i].color[0];
+		(*cloud).push_back(pt);
+	}
 
+	MovingLeastSquares<PointXYZ, PointXYZ> mls;
+	mls.setInputCloud (cloud);
+	mls.setSearchRadius (0.01);
+	mls.setPolynomialFit (true);
+	mls.setPolynomialOrder (2);
+	mls.setUpsamplingMethod (MovingLeastSquares<PointXYZ, PointXYZ>::SAMPLE_LOCAL_PLANE);
+	mls.setUpsamplingRadius (0.005);
+	mls.setUpsamplingStepSize (0.003);
+	PointCloud<PointXYZ>::Ptr cloud_smoothed (new PointCloud<PointXYZ> ());
+	mls.process (*cloud_smoothed);
+	NormalEstimationOMP<PointXYZ, Normal> ne;
+	ne.setNumberOfThreads (8);
+	ne.setInputCloud (cloud_smoothed);
+	ne.setRadiusSearch (0.01);
+	Eigen::Vector4f centroid;
+	compute3DCentroid (*cloud_smoothed, centroid);
+	ne.setViewPoint (centroid[0], centroid[1], centroid[2]);
+	PointCloud<Normal>::Ptr cloud_normals (new PointCloud<Normal> ());
+	ne.compute (*cloud_normals);
+	for (size_t i = 0; i < cloud_normals->size (); ++i)
+	{
+		cloud_normals->points[i].normal_x *= -1;
+		cloud_normals->points[i].normal_y *= -1;
+		cloud_normals->points[i].normal_z *= -1;
+	}
+	PointCloud<PointNormal>::Ptr cloud_smoothed_normals (new PointCloud<PointNormal> ());
+	concatenateFields (*cloud_smoothed, *cloud_normals, *cloud_smoothed_normals);
+
+	Poisson<PointNormal> poisson;
+	poisson.setDepth (9);
+	poisson.setInputCloud
+	(cloud_smoothed_normals);
+	PolygonMesh mesh;
+	poisson.reconstruct (mesh);
+	io::saveVTKFile ("C:\\testMesh", mesh);
 }
