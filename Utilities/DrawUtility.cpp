@@ -83,7 +83,7 @@ void DrawUtility::WritePLYFile(std::string fileName, std::vector<SCPoint3D> poin
 {
 	cout << ".ply file \""<< fileName <<"\" is being prepared..." << endl;
 
-	ofstream outputFile("test.ply"/*, ofstream::out*/);
+	ofstream outputFile(fileName/*, ofstream::out*/);
 
 	if (outputFile.is_open())
 	{

@@ -15,7 +15,7 @@ using pcl::visualization::PointCloudColorHandlerCustom;
 
 
 	//our visualizer
-	pcl::visualization::PCLVisualizer *p;
+	pcl::visualization::PCLVisualizer *pclVisualizer;
 	//its left and right viewports
 	int vp_1, vp_2;
 
@@ -71,16 +71,16 @@ public:
  */
 void showCloudsLeft(const PointCloud::Ptr cloud_target, const PointCloud::Ptr cloud_source)
 {
-  p->removePointCloud ("vp1_target");
-  p->removePointCloud ("vp1_source");
+  pclVisualizer->removePointCloud ("vp1_target");
+  pclVisualizer->removePointCloud ("vp1_source");
 
   PointCloudColorHandlerCustom<PointT> tgt_h (cloud_target, 0, 255, 0);
   PointCloudColorHandlerCustom<PointT> src_h (cloud_source, 255, 0, 0);
-  p->addPointCloud (cloud_target, tgt_h, "vp1_target", vp_1);
-  p->addPointCloud (cloud_source, src_h, "vp1_source", vp_1);
+  pclVisualizer->addPointCloud (cloud_target, tgt_h, "vp1_target", vp_1);
+  pclVisualizer->addPointCloud (cloud_source, src_h, "vp1_source", vp_1);
 
   PCL_INFO ("Press q to begin the registration.\n");
-  p-> spin();
+  pclVisualizer-> spin();
 }
 
 
@@ -90,8 +90,8 @@ void showCloudsLeft(const PointCloud::Ptr cloud_target, const PointCloud::Ptr cl
  */
 void showCloudsRight(const PointCloudWithNormals::Ptr cloud_target, const PointCloudWithNormals::Ptr cloud_source)
 {
-  p->removePointCloud ("source");
-  p->removePointCloud ("target");
+  pclVisualizer->removePointCloud ("source");
+  pclVisualizer->removePointCloud ("target");
 
 
   PointCloudColorHandlerGenericField<PointNormalT> tgt_color_handler (cloud_target, "curvature");
@@ -103,10 +103,10 @@ void showCloudsRight(const PointCloudWithNormals::Ptr cloud_target, const PointC
       PCL_WARN ("Cannot create curvature color handler!");
 
 
-  p->addPointCloud (cloud_target, tgt_color_handler, "target", vp_2);
-  p->addPointCloud (cloud_source, src_color_handler, "source", vp_2);
+  pclVisualizer->addPointCloud (cloud_target, tgt_color_handler, "target", vp_2);
+  pclVisualizer->addPointCloud (cloud_source, src_color_handler, "source", vp_2);
 
-  p->spinOnce();
+  pclVisualizer->spinOnce();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
     prev = reg.getLastIncrementalTransformation ();
 
     // visualize current state
-    showCloudsRight(points_with_normals_tgt, points_with_normals_src);
+    //showCloudsRight(points_with_normals_tgt, points_with_normals_src);
   }
 
 	//
@@ -230,19 +230,19 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
   // Transform target back in source frame
   pcl::transformPointCloud (*cloud_tgt, *output, targetToSource);
 
-  p->removePointCloud ("source");
-  p->removePointCloud ("target");
+  /*pclVisualizer->removePointCloud ("source");
+  pclVisualizer->removePointCloud ("target");
 
   PointCloudColorHandlerCustom<PointT> cloud_tgt_h (output, 0, 255, 0);
   PointCloudColorHandlerCustom<PointT> cloud_src_h (cloud_src, 255, 0, 0);
-  p->addPointCloud (output, cloud_tgt_h, "target", vp_2);
-  p->addPointCloud (cloud_src, cloud_src_h, "source", vp_2);
+  pclVisualizer->addPointCloud (output, cloud_tgt_h, "target", vp_2);
+  pclVisualizer->addPointCloud (cloud_src, cloud_src_h, "source", vp_2);
 
 	PCL_INFO ("Press q to continue the registration.\n");
-  p->spin ();
+  pclVisualizer->spin ();
 
-  p->removePointCloud ("source"); 
-  p->removePointCloud ("target");
+  pclVisualizer->removePointCloud ("source"); 
+  pclVisualizer->removePointCloud ("target");*/
 
   //add the source to the transformed target
   *output += *cloud_src;
@@ -253,9 +253,9 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
 std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTransformation(PointCloud::Ptr trainingPointCloud, PointCloud::Ptr testPointCloud)
 {
 	// Create a PCLVisualizer object
-	p = new pcl::visualization::PCLVisualizer ("Pairwise Incremental Registration example");
-	p->createViewPort (0.0, 0, 0.5, 1.0, vp_1);
-	p->createViewPort (0.5, 0, 1.0, 1.0, vp_2);
+	/*pclVisualizer = new pcl::visualization::PCLVisualizer ("Pairwise Incremental Registration example");
+	pclVisualizer->createViewPort (0.0, 0, 0.5, 1.0, vp_1);
+	pclVisualizer->createViewPort (0.5, 0, 1.0, 1.0, vp_2);*/
 
 	PointCloud::Ptr result (new PointCloud), source, target;
 	Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
@@ -264,7 +264,7 @@ std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTran
 	target = testPointCloud;
 
     // Add visualization data
-    showCloudsLeft(source, target);
+    //showCloudsLeft(source, target);
 
     PointCloud::Ptr temp (new PointCloud);
     pairAlign (source, target, temp, pairTransform, true);
