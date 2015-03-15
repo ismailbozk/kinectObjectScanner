@@ -23,15 +23,90 @@ using namespace std;
 using namespace cv;
 using namespace Eigen;
 
+#pragma region Surface Reconstruction
+
+pcl::PolygonMesh::Ptr TransformationUtility::SurfaceReconstruction(PointCloudT::Ptr cloud)
+{
+	//downSampling
+	PointCloudT::Ptr downSampledCloud (new PointCloudT);
+	pcl::VoxelGrid<PointT> grid;
+    grid.setLeafSize (0.005, 0.005, 0.005);
+    grid.setInputCloud (cloud);
+    grid.filter (*downSampledCloud);
+
+	
+	PointCloudT::Ptr filtered(new PointCloudT());
+    PassThrough<PointT> filter;
+    //filter.setInputCloud(downSampledCloud);//use for downSampled clouds
+	filter.setInputCloud(cloud);
+    filter.filter(*filtered);
+    cout << "passthrough filter complete" << endl;
+
+	//up sampling
+    /*cout << "begin moving least squares" << endl;
+    MovingLeastSquares<PointXYZ, PointXYZ> mls;
+    mls.setInputCloud(filtered);
+    mls.setSearchRadius(0.01);
+    mls.setPolynomialFit(true);
+    mls.setPolynomialOrder(2);
+    mls.setUpsamplingMethod(MovingLeastSquares<PointXYZ, PointXYZ>::SAMPLE_LOCAL_PLANE);
+    mls.setUpsamplingRadius(0.005);
+    mls.setUpsamplingStepSize(0.003);
+
+	PointCloudT::Ptr cloud_smoothed (new PointCloudT());
+    mls.process(*cloud_smoothed);
+    cout << "MLS complete" << endl;*/
+
+
+
+	cout << "begin normal estimation" << endl;
+    NormalEstimationOMP<PointXYZ, Normal> ne;
+    ne.setNumberOfThreads(4);
+    ne.setInputCloud(filtered);
+    ne.setRadiusSearch(0.01);
+    Eigen::Vector4f centroid;
+    compute3DCentroid(*filtered, centroid);
+    ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
+
+	pcl::PointCloud<Normal>::Ptr cloud_normals (new pcl::PointCloud<Normal>());
+    ne.compute(*cloud_normals);
+    cout << "normal estimation complete" << endl;
+    cout << "reverse normals' direction" << endl;
+
+	for(size_t i = 0; i < cloud_normals->size(); ++i)
+	{
+    	cloud_normals->points[i].normal_x *= -1;
+    	cloud_normals->points[i].normal_y *= -1;
+    	cloud_normals->points[i].normal_z *= -1;
+    }
+
+	cout << "combine points and normals" << endl;
+    pcl::PointCloud<PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<PointNormal>());
+    concatenateFields(*filtered, *cloud_normals, *cloud_smoothed_normals);
+	
+	cout << "begin poisson reconstruction" << endl;
+    Poisson<PointNormal> poisson;
+    poisson.setDepth(9);
+	//poisson.setScale(1);
+
+    poisson.setInputCloud(cloud_smoothed_normals);
+    PolygonMesh::Ptr mesh(new PolygonMesh());
+    poisson.reconstruct(*mesh);	//warning this one can take, more than you might expect.
+
+	return mesh;
+}
+
+#pragma endregion
+
 #pragma region PointCloud iterative registration
 
 //convenient structure to handle our pointclouds
 struct PCD
 {
-  PointCloud::Ptr cloud;
+  PointCloudT::Ptr cloud;
   std::string f_name;
 
-  PCD() : cloud (new PointCloud) {};
+  PCD() : cloud (new PointCloudT) {};
 };
 
 struct PCDComparator
@@ -69,7 +144,7 @@ public:
 /** \brief Display source and target on the first viewport of the visualizer
  *
  */
-void showCloudsLeft(const PointCloud::Ptr cloud_target, const PointCloud::Ptr cloud_source)
+void showCloudsLeft(const PointCloudT::Ptr cloud_target, const PointCloudT::Ptr cloud_source)
 {
   pclVisualizer->removePointCloud ("vp1_target");
   pclVisualizer->removePointCloud ("vp1_source");
@@ -128,13 +203,13 @@ void loadData (int argc, char **argv, std::vector<PCD, Eigen::aligned_allocator<
   * \param output the resultant aligned source PointCloud
   * \param final_transform the resultant transform between source and target
   */
-void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt, PointCloud::Ptr output, Eigen::Matrix4f &final_transform, bool downsample = false)
+void pairAlign (const PointCloudT::Ptr cloud_src, const PointCloudT::Ptr cloud_tgt, PointCloudT::Ptr output, Eigen::Matrix4f &final_transform, bool downsample = false)
 {
   //
   // Downsample for consistency and speed
   // \note enable this for large datasets
-  PointCloud::Ptr src (new PointCloud);
-  PointCloud::Ptr tgt (new PointCloud);
+  PointCloudT::Ptr src (new PointCloudT);
+  PointCloudT::Ptr tgt (new PointCloudT);
   pcl::VoxelGrid<PointT> grid;
   if (downsample)
   {
@@ -250,15 +325,17 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
   final_transform = targetToSource;
  }
 
-std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTransformation(PointCloud::Ptr trainingPointCloud, PointCloud::Ptr testPointCloud)
+std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTransformation(PointCloudT::Ptr trainingPointCloud, PointCloudT::Ptr testPointCloud)
 {
 	// Create a PCLVisualizer object
-	/*pclVisualizer = new pcl::visualization::PCLVisualizer ("Pairwise Incremental Registration example");
+	/*
+	pclVisualizer = new pcl::visualization::PCLVisualizer ("Pairwise Incremental Registration example");
 	pclVisualizer->createViewPort (0.0, 0, 0.5, 1.0, vp_1);
-	pclVisualizer->createViewPort (0.5, 0, 1.0, 1.0, vp_2);*/
+	pclVisualizer->createViewPort (0.5, 0, 1.0, 1.0, vp_2);
+	*/
 
-	PointCloud::Ptr result (new PointCloud), source, target;
-	Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity (), pairTransform;
+	PointCloudT::Ptr result (new PointCloudT), source, target;
+	Eigen::Matrix4f pairTransform;
 
 	source = trainingPointCloud;
 	target = testPointCloud;
@@ -266,18 +343,8 @@ std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTran
     // Add visualization data
     //showCloudsLeft(source, target);
 
-    PointCloud::Ptr temp (new PointCloud);
+    PointCloudT::Ptr temp (new PointCloudT);
     pairAlign (source, target, temp, pairTransform, true);
-
-    //transform current pair into the global transform
-    pcl::transformPointCloud (*temp, *result, GlobalTransform);
-
-    //update the global transform
-    GlobalTransform = GlobalTransform * pairTransform;
-
-		//save aligned pair, transformed into the first cloud's frame
-    std::stringstream ss;
-    pcl::io::savePCDFile (ss.str (), *result, true);
 
 	std::shared_ptr<cv::Matx44f> iterativeTransformationMatrix(new cv::Matx44f());
 	

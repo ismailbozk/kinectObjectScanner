@@ -18,16 +18,10 @@
 #include "Models\Match3D.h"
 #include "Models\SCPoint3D.h"
 
-#include <iostream>
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
-#include <pcl/search/kdtree.h>
-#include <pcl/features/normal_3d_omp.h>
-#include <pcl/point_types.h>
-#include <pcl/surface/mls.h>
-#include <pcl/surface/poisson.h>
-#include <pcl/filters/passthrough.h>
+
 
 using namespace pcl;
 using namespace cv;
@@ -57,7 +51,7 @@ void PlayGround::startToPlay()
 
 	surfDetector.detect(kinectModelTrain.grayImage, keyPointsTrain);
 	surfDetector.detect(kinectModelTest.grayImage, keyPointsTest);
-	cout << "Step 1: rgb frame features extracted." << endl;
+	cout << "Step 1: RGB frame features extracted." << endl;
 
 	//-- Step 2: Calculate descriptors (feature vectors)
 	SurfDescriptorExtractor extractor;
@@ -65,7 +59,7 @@ void PlayGround::startToPlay()
 	
 	extractor.compute(kinectModelTrain.grayImage, keyPointsTrain, descriptorsTrain);
 	extractor.compute(kinectModelTest.grayImage, keyPointsTest, descriptorsTest);
-	cout << "Step 2: Feature descriptors extracted" << endl;
+	cout << "Step 2: Feature descriptors extracted." << endl;
 
 	//-- Step 3: Matching descriptor vectors with a brute force matcher
 	BFMatcher matcher(NORM_L2, false);
@@ -140,7 +134,6 @@ void PlayGround::startToPlay()
 		(*testCloud).push_back(pt);
 	}
 
-	
 	shared_ptr<Matx44f> iterativeTransformation = TransformationUtility::IterativePointCloudMatchTransformation(trainCloud, testCloud);
 	(*transformationMatrix) = (*transformationMatrix) * (*iterativeTransformation);
 	vector<SCPoint3D> *testPCAfterIterativeApproach = TransformationUtility::Transform(kinectModelTest, (*transformationMatrix));
@@ -149,6 +142,7 @@ void PlayGround::startToPlay()
 	(*allPCAfterIterativeApproach).insert( (*allPCAfterIterativeApproach).end(), (*trainPC).begin(), (*trainPC).end());
 	(*allPCAfterIterativeApproach).insert( (*allPCAfterIterativeApproach).end(), (*testPCAfterIterativeApproach).begin(), (*testPCAfterIterativeApproach).end());
 	//DrawUtility::WritePLYFile("testAfterIterativeApproach.ply", *allPCAfterIterativeApproach);
+	cout << "Step 5: Iterative point cloud registration." << endl;
 
 	//-- Step 6: Surface Reconstruction
 	pcl::PointCloud<PointXYZ>::Ptr cloud (new pcl::PointCloud<PointXYZ>());
@@ -162,74 +156,10 @@ void PlayGround::startToPlay()
 		//pt.g = (*allPC)[i].color[1];
 		//pt.b = (*allPC)[i].color[0];
 		(*cloud).push_back(pt);
-		
 	}
 
-	//downSampling
-	pcl::PointCloud<PointXYZ>::Ptr downSampledCloud (new pcl::PointCloud<PointXYZ>);
-	pcl::VoxelGrid<PointT> grid;
-    grid.setLeafSize (0.05, 0.05, 0.05);
-    grid.setInputCloud (cloud);
-    grid.filter (*downSampledCloud);
+	PolygonMesh::Ptr mesh = TransformationUtility::SurfaceReconstruction(cloud);
+	cout << "Step 6: Surface reconstruction" << endl;
 
-	
-	
-	pcl::PointCloud<PointXYZ>::Ptr filtered(new pcl::PointCloud<PointXYZ>());
-    PassThrough<PointXYZ> filter;
-    filter.setInputCloud(cloud);
-    filter.filter(*filtered);
-    cout << "passthrough filter complete" << endl;
-
-	//up sampling
-    /*cout << "begin moving least squares" << endl;
-    MovingLeastSquares<PointXYZ, PointXYZ> mls;
-    mls.setInputCloud(filtered);
-    mls.setSearchRadius(0.01);
-    mls.setPolynomialFit(true);
-    mls.setPolynomialOrder(2);
-    mls.setUpsamplingMethod(MovingLeastSquares<PointXYZ, PointXYZ>::SAMPLE_LOCAL_PLANE);
-    mls.setUpsamplingRadius(0.005);
-    mls.setUpsamplingStepSize(0.003);
-
-	pcl::PointCloud<PointXYZ>::Ptr cloud_smoothed (new pcl::PointCloud<PointXYZ>());
-    mls.process(*cloud_smoothed);
-    cout << "MLS complete" << endl;*/
-
-
-
-	cout << "begin normal estimation" << endl;
-    NormalEstimationOMP<PointXYZ, Normal> ne;
-    ne.setNumberOfThreads(4);
-    ne.setInputCloud(filtered);
-    ne.setRadiusSearch(0.01);
-    Eigen::Vector4f centroid;
-    compute3DCentroid(*filtered, centroid);
-    ne.setViewPoint(centroid[0], centroid[1], centroid[2]);
-
-	pcl::PointCloud<Normal>::Ptr cloud_normals (new pcl::PointCloud<Normal>());
-    ne.compute(*cloud_normals);
-    cout << "normal estimation complete" << endl;
-    cout << "reverse normals' direction" << endl;
-
-	for(size_t i = 0; i < cloud_normals->size(); ++i)
-	{
-    	cloud_normals->points[i].normal_x *= -1;
-    	cloud_normals->points[i].normal_y *= -1;
-    	cloud_normals->points[i].normal_z *= -1;
-    }
-
-	cout << "combine points and normals" << endl;
-    pcl::PointCloud<PointNormal>::Ptr cloud_smoothed_normals(new pcl::PointCloud<PointNormal>());
-    concatenateFields(*filtered, *cloud_normals, *cloud_smoothed_normals);
-	
-	cout << "begin poisson reconstruction" << endl;
-    Poisson<PointNormal> poisson;
-    poisson.setDepth(9);
-	poisson.setScale(1);
-
-    poisson.setInputCloud(cloud_smoothed_normals);
-    PolygonMesh mesh;
-    poisson.reconstruct(mesh);
-
-	io::savePLYFile("testMesh.ply", mesh);
+	io::savePLYFile("testMesh.ply", *mesh);
 }

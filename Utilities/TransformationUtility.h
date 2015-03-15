@@ -4,12 +4,14 @@
 #include <opencv2/nonfree/nonfree.hpp>
 
 #include <vector>
+#include <iostream>
 
 #include "../Models/BaseKinectModel.h"
 #include "../Models/Match3D.h"
 #include "../Models/SCPoint3D.h"
 
 #include <boost/make_shared.hpp>
+
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_representation.h>
@@ -21,20 +23,27 @@
 #include <pcl/registration/icp_nl.h>
 #include <pcl/registration/transforms.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/common/common.h>
+#include <pcl/search/kdtree.h>
+#include <pcl/features/normal_3d_omp.h>
+#include <pcl/surface/mls.h>
+#include <pcl/surface/poisson.h>
+#include <pcl/filters/passthrough.h>
 
+using namespace pcl;
 
 //convenient typedefs
 typedef pcl::PointXYZ PointT;
-typedef pcl::PointCloud<PointT> PointCloud;
+typedef pcl::PointCloud<PointT> PointCloudT;
 typedef pcl::PointNormal PointNormalT;
 typedef pcl::PointCloud<PointNormalT> PointCloudWithNormals;
 
 class TransformationUtility
 {
 public:
+	static pcl::PolygonMesh::Ptr TransformationUtility::SurfaceReconstruction(PointCloudT::Ptr cloud);
 
-
-	static std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTransformation(PointCloud::Ptr trainingPointCloud, PointCloud::Ptr testPointCloud);
+	static std::shared_ptr<cv::Matx44f> TransformationUtility::IterativePointCloudMatchTransformation(PointCloudT::Ptr trainingPointCloud, PointCloudT::Ptr testPointCloud);
 
 
 	static std::vector<Match3D> *TransformationUtility::Create3DMatchPoints(std::vector<bool> &mask, std::vector<std::vector<cv::DMatch>> &matches, BaseKinectModel &trainKinectModel, std::vector<cv::KeyPoint> &trainKeypoints, BaseKinectModel &testKinectModel, std::vector<cv::KeyPoint> &testKeypoints);
