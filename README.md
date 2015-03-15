@@ -19,16 +19,25 @@ Firstly There are two additonal libraries need to be initialized.
   Install and Setting Environmental Variables, and Setting Project
 
   Download the All-in-one Installer, and install.
+  
   In the standard, PCL is installed in the “C:\Program Files\PCL 1.7.2″ (or “C:\Program Files (x86)\PCL 1.7.2″).
+  
   Please use the Uninstall.exe when you want to uninstall.
 
+
+
   Set the environment variable for PCL and 3rdParty.
-  VARIABLE NAME	VARIABLE VALUE
+
+
   PCL_ROOT	C:\Program Files\PCL 1.7.2(or C:\Program Files (x86)\PCL 1.7.2)
+  
   Path	;%PCL_ROOT%\bin  ;%PCL_ROOT%\3rdParty\FLANN\bin  ;%PCL_ROOT%\3rdParty\VTK\bin
+  
+  
+  
   If you installed the OpenNI2, as well setting the following path.
 
-  VARIABLE NAME	VARIABLE VALUE
+
   Path	;%OPENNI2_REDIST64%(or %OPENNI2_REDIST%)
 
 You can start to test by PlayGound class with the testData under testData directory.
