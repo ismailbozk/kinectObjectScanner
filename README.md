@@ -2,7 +2,7 @@
 
 ### What is this repository for? ###
 
-This project is a research application of a rigid object scanner by using the Microsoft's Kinect.
+This project is a rigid object scanner via the Microsoft's Kinect.
 
 ### How do I get set up? ###
 
