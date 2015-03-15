@@ -21,6 +21,14 @@ There are two additonal libraries need to be initialized.
 
 You can start to test by PlayGound class with the testData under testData directory.
 
+### Some test Results ###
+
+https://youtu.be/aeZjN-4Y1sg
+
+### A Theoretical and Experimental Research in Computer Vision ###
+
+[Depth-Scale Method in 3D Registration of RGB-D Sensor Outputs!](https://drive.google.com/file/d/0B7zdPQ85ffutMURUQ3BvLWM5eE0/edit?usp=sharing)
+
 ### Licence ###
 
 KinectScanner is available under [MIT Licence!](https://bitbucket.org/Llwydbleidd/kinectscanner/src/49e24b79d5bdb652f32437a2f3e87647d2f02536/LICENCE.txt)
