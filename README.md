@@ -15,7 +15,8 @@ Firstly There are two additonal libraries need to be initialized.
 - OpenCV 2.4.9 must be initialised and $(OPENCV_DIR) must be added under the sytem paths.
 - Point Cloud library 1.7.2 for VS2012. http://unanancyowen.com/?p=1255&lang=en
   PCL 1.7.2 can be found under project's Download section.
-  Here is the guide to install it properyly
+  Here is the guide to install it properly.
+  
   Install and Setting Environmental Variables, and Setting Project
 
   Download the All-in-one Installer, and install.
