@@ -20,3 +20,7 @@ There are two additonal libraries need to be initialized.
             4. Path	;%OPENNI2_REDIST64%(or %OPENNI2_REDIST%)
 
 You can start to test by PlayGound class with the testData under testData directory.
+
+### Licence ###
+
+KinectScanner is available under [MIT Licence!](https://bitbucket.org/Llwydbleidd/kinectscanner/src/49e24b79d5bdb652f32437a2f3e87647d2f02536/LICENCE.txt)
