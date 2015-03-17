@@ -2,7 +2,7 @@
 
 ### What is this repository for? ###
 
-This project is a rigid object scanner via the Microsoft's Kinect.
+This is a rigid object scanner project. The only hardware I use is the Microsoft's Kinect.
 
 ### How do I get set up? ###
 
@@ -19,9 +19,7 @@ There are two additonal libraries need to be initialized.
             3. If you installed the OpenNI2, as well setting the following path.
             4. Path	;%OPENNI2_REDIST64%(or %OPENNI2_REDIST%)
 
-You can start to test by PlayGound class with the testData under testData directory.
-
-### What does it do? ###
+### How does it work? ###
 
 0. Load the data. 
     1. Get two consecutive kinect rgb-depth frames.
@@ -31,16 +29,15 @@ You can start to test by PlayGound class with the testData under testData direct
 2. Match the features of the consecutive frames on both 2D and 3D space.
 3. Corresponding point base registration:[A Method for Registration of 3D Shapes!](http://www.cs.virginia.edu/~mjh7v/bib/Besl92.pdf)
 4. Now apply Iterative Closest Point Registration:[A Method for Registration of 3D Shapes!](http://www.cs.virginia.edu/~mjh7v/bib/Besl92.pdf). To reduce the error of the previous step.
-5. Finally Surface Reconstruction. (I have a bug here) 
-6. Repeat the all the steps for the n+1 and n+2 rgb-d frames.
-
+5. Repeat the all the steps for the n+1 and n+2 rgb-d frames and so on.
+6. Finally Surface Reconstruction. (I have a bug here) 
 [Playground.cpp!](https://bitbucket.org/ismailbozk/kinectscanner/src/04b1c00e1f2e/PlayGround.cpp?at=master) work pipeline.
 
-You can use different rgb-d frames which are located in the testData directory.
+You can use different rgb-d frames which are located under the testData directory.
 
 ### Some Test Results ###
 
-https://youtu.be/aeZjN-4Y1sg
+[https://youtu.be/aeZjN-4Y1sg!](https://youtu.be/aeZjN-4Y1sg)
 
 ### A Theoretical and Experimental Research in Computer Vision ###
 
