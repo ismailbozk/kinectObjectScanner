@@ -37,7 +37,11 @@ You can use different rgb-d frames which are located under the testData director
 
 ### Some Test Results ###
 
-[https://youtu.be/aeZjN-4Y1sg!](https://youtu.be/aeZjN-4Y1sg)
+[![Depth-Scale Method in 3D Registration of RGB-D Sensor Outputs - VISAPP 2014 ][1]][2]
+
+ [1]: http://img.youtube.com/vi/aeZjN-4Y1sg/0.jpg "Depth-Scale Method in 3D Registration of RGB-D Sensor Outputs - VISAPP 2014 "
+ [2]: https://www.youtube.com/watch?v=aeZjN-4Y1sg
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/aeZjN-4Y1sg" frameborder="0" allowfullscreen></iframe>
 
 ### A Theoretical and Experimental Research in Computer Vision ###
