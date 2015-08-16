@@ -2,7 +2,7 @@
 
 ### What is this repository for? ###
 
-This is a rigid object scanner project. The only hardware I use is the Microsoft's Kinect.
+This is a rigid object scanner project.
 
 ### How do I get set up? ###
 
@@ -31,13 +31,14 @@ There are two additonal libraries need to be initialized.
 4. Now apply Iterative Closest Point Registration:[A Method for Registration of 3D Shapes!](http://www.cs.virginia.edu/~mjh7v/bib/Besl92.pdf). To reduce the error of the previous step.
 5. Repeat the all the steps for the n+1 and n+2 rgb-d frames and so on.
 6. Finally Surface Reconstruction. (I have a bug here) 
-[Playground.cpp!](https://bitbucket.org/ismailbozk/kinectscanner/src/04b1c00e1f2e/PlayGround.cpp?at=master) work pipeline.
+[Playground.cpp!](https://github.com/ismailbozk/kinectObjectScanner/blob/master/PlayGround.cpp) work pipeline.
 
 You can use different rgb-d frames which are located under the testData directory.
 
 ### Some Test Results ###
 
 [https://youtu.be/aeZjN-4Y1sg!](https://youtu.be/aeZjN-4Y1sg)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/aeZjN-4Y1sg" frameborder="0" allowfullscreen></iframe>
 
 ### A Theoretical and Experimental Research in Computer Vision ###
 
@@ -49,4 +50,4 @@ You can use different rgb-d frames which are located under the testData director
 
 ### Licence ###
 
-KinectScanner is available under [MIT Licence!](https://bitbucket.org/Llwydbleidd/kinectscanner/src/49e24b79d5bdb652f32437a2f3e87647d2f02536/LICENCE.txt)
+KinectScanner is available under [MIT Licence!](https://github.com/ismailbozk/kinectObjectScanner/blob/master/LICENCE.txt)
